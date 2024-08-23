@@ -25,7 +25,9 @@ public enum ErrorCode {
     FILE_UPLOAD_ERROR(1003, "Something went wrong, uploading failed", HttpStatus.BAD_REQUEST),
     JOBPOST_NOT_FOUND(1006, "Jobpost not found", HttpStatus.NOT_FOUND),
     CURRICULUM_VITAE_NOT_FOUND(1006, "Curriculum vitae not existed", HttpStatus.NOT_FOUND),
-    CURRICULUM_VITAE_NOT_OWNED_BY_USER(1003, "CV not owned by this user", HttpStatus.BAD_REQUEST);
+    CURRICULUM_VITAE_NOT_OWNED_BY_USER(1003, "CV not owned by this user", HttpStatus.BAD_REQUEST),
+    APPLICATION_DUE_DATE_PASSED(1005, "The application due date has passed", HttpStatus.BAD_REQUEST),
+    JOBPOST_NOT_OWNED_BY_USER(1003, "Jobpost not owned by this user", HttpStatus.BAD_REQUEST);
 
 
     private int code;

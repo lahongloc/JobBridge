@@ -41,6 +41,12 @@ public class ApplicationService {
     UserRepository userRepository;
 
     public ApplicationResponse createApplication(ApplicationRequest request) throws IOException {
+        var jobPost = this.jobPostRepository.findById(request.getJobPost())
+                .orElseThrow(() -> new AppException(ErrorCode.JOBPOST_NOT_FOUND));
+        if (new Date().after(jobPost.getApplicationDueDate())) {
+            throw new AppException(ErrorCode.APPLICATION_DUE_DATE_PASSED);
+        }
+
         CurriculumVitae curriculumVitae;
         if (request.getCurriculumVitae() != null && !request.getCurriculumVitae().isEmpty()) {
             curriculumVitae = this.curriculumVitaeRepository.findById(request.getCurriculumVitae())
@@ -68,9 +74,6 @@ public class ApplicationService {
             CurriculumVitaeResponse curriculumVitaeResponse = this.curriculumVitaeService.uploadCV(curriculumVitaeRequest);
             curriculumVitae = this.curriculumVitaeMapper.toCurriculumVitae(curriculumVitaeResponse);
         }
-
-        var jobPost = this.jobPostRepository.findById(request.getJobPost())
-                .orElseThrow(() -> new AppException(ErrorCode.JOBPOST_NOT_FOUND));
 
         Application application = this.applicationMapper.toApplication(request);
         application.setCreatedDate(new Date());

@@ -17,6 +17,7 @@ import APIs, { enpoints } from "./configs/APIs";
 import CVUpload from "./components/site-components/CVUpload";
 import JobDetail from "./components/site-components/JobDetail";
 import CVList from "./components/site-components/CVList";
+import JobPostUpdatingForm from "./components/site-components/JobPostUpdatingForm";
 
 export const UserContext = createContext();
 export const WorkTypeContext = createContext();
@@ -126,6 +127,10 @@ const App = () => {
 										<Route
 											path={paths["resume-management"]}
 											element={<CVList />}
+										/>
+										<Route
+											path="/"
+											element={<JobPostUpdatingForm />}
 										/>
 									</>
 								)}

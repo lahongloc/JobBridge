@@ -9,6 +9,7 @@ import {
 	Radio,
 	message,
 	Tag,
+	Popconfirm,
 	Spin,
 } from "antd";
 import {
@@ -67,18 +68,20 @@ const ApplyJobModal = ({ job, isModalVisible, handleCancel }) => {
 	const handleApply = async (formData) => {
 		setLoading(true);
 		try {
-			const res = await APIs.post(
-				enpoints["applicationHandler"],
-				formData,
-				{
-					headers: {
-						Authorization: `Bearer ${cookie.load("token")}`,
-						"Content-Type": "multipart/form-data",
+			if (isModalVisible) {
+				const res = await APIs.post(
+					enpoints["applicationHandler"],
+					formData,
+					{
+						headers: {
+							Authorization: `Bearer ${cookie.load("token")}`,
+							"Content-Type": "multipart/form-data",
+						},
 					},
-				},
-			);
-			message.success("Nộp hồ sơ ứng tuyển thành công!");
-			handleCancel();
+				);
+				message.success("Nộp hồ sơ ứng tuyển thành công!");
+				handleCancel();
+			}
 		} catch (err) {
 			message.error("Nộp hồ sơ ứng tuyển thất bại!");
 			console.error(err);
@@ -86,6 +89,11 @@ const ApplyJobModal = ({ job, isModalVisible, handleCancel }) => {
 			setLoading(false);
 		}
 	};
+
+	const confirm = (e) => {
+		handleSubmit();
+	};
+	const cancel = (e) => {};
 
 	const handleSubmit = () => {
 		if (selectedOption === "library" && !selectedCV) {
@@ -187,17 +195,23 @@ const ApplyJobModal = ({ job, isModalVisible, handleCancel }) => {
 			open={isModalVisible}
 			onCancel={handleCancel}
 			footer={[
-				<Button onClick={handleCancel} key="cancel">
-					Hủy
-				</Button>,
-				<Button
-					disabled={loading}
-					key="submit"
-					type="primary"
-					onClick={handleSubmit}
+				<Popconfirm
+					title={`Xác nhận ứng tuyển vị trí ${job.jobTitle}!`}
+					description="Bạn có chắc chắn ứng tuyển cho vị trí này? Sau khi ứng tuyển bạn sẽ không thể thu hồi hồ sơ của mình!"
+					onConfirm={confirm}
+					onCancel={cancel}
+					okText="Xác nhận"
+					cancelText="Hủy"
 				>
-					Nộp hồ sơ ứng tuyển {loading && <Spin />}
-				</Button>,
+					<Button
+						disabled={loading}
+						key="submit"
+						type="primary"
+						// onClick={handleSubmit}
+					>
+						Nộp hồ sơ ứng tuyển {loading && <Spin />}
+					</Button>
+				</Popconfirm>,
 			]}
 		>
 			{/* Choose Option */}

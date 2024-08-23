@@ -23,6 +23,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Date;
 
 @Service
@@ -135,8 +137,54 @@ public class JobPostService {
             spec = spec.and(JobPostSpecifications.jobFieldEquals(jobField.getName()));
         }
 
-
         return this.jobPostRepository.findAll(spec, pageable)
                 .map(this.jobPostMapper::toJobPostResponse);
+    }
+
+    public JobPostResponse updateJobPost(JobPostRequest request, String jobPostId) {
+        JobPost jobPost = this.jobPostRepository.findById(jobPostId)
+                .orElseThrow(() -> new AppException(ErrorCode.JOBPOST_NOT_FOUND));
+
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = this.userRepository.findByEmail(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        if (!(jobPost.getUser().getId().equals(user.getId())))
+            throw new AppException(ErrorCode.JOBPOST_NOT_OWNED_BY_USER);
+
+        Arrays.stream(request.getClass().getDeclaredFields()).forEach(f -> {
+            f.setAccessible(true);
+            try {
+                Object fieldValue = f.get(request);
+                if (!(f.getName().equals("workType") || f.getName().equals("jobLocation")
+                        || f.getName().equals("jobField"))) {
+                    if (fieldValue != null && !fieldValue.toString().isEmpty()) {
+                        Field jobPostField = jobPost.getClass().getDeclaredField(f.getName());
+                        jobPostField.setAccessible(true);
+                        jobPostField.set(jobPost, fieldValue);
+                    }
+                }
+            } catch (IllegalAccessException | NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        if (request.getWorkType() != null && !request.getWorkType().equals(jobPost.getWorkType().getId())) {
+            if (!request.getWorkType().isEmpty())
+                jobPost.setWorkType(this.workTypeRepository.findById(request.getWorkType())
+                        .orElseThrow(() -> new AppException(ErrorCode.WORKTYPE_NOT_FOUND)));
+        }
+        if (request.getJobLocation() != null && !request.getJobLocation().equals(jobPost.getJobLocation().getId())) {
+            if (!request.getJobLocation().isEmpty())
+                jobPost.setJobLocation(this.jobLocationRepositoty.findById(request.getJobLocation())
+                        .orElseThrow(() -> new AppException(ErrorCode.JOBLOCATION_NOT_FOUND)));
+        }
+        if (request.getJobField() != null && !request.getJobField().equals(jobPost.getJobField().getId())) {
+            if (!request.getJobField().isEmpty())
+                jobPost.setJobField(this.jobFieldRepository.findById(request.getJobField())
+                        .orElseThrow(() -> new AppException(ErrorCode.JOBFIELD_NOT_FOUND)));
+        }
+        this.jobPostRepository.save(jobPost);
+        return this.jobPostMapper.toJobPostResponse(jobPost);
     }
 }

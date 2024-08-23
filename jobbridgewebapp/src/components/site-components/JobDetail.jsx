@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
 	Card,
 	Row,
@@ -8,6 +8,8 @@ import {
 	Descriptions,
 	Divider,
 	Typography,
+	Tag,
+	message,
 } from "antd";
 import {
 	UsergroupAddOutlined,
@@ -17,6 +19,7 @@ import {
 	FileTextOutlined,
 	FileDoneOutlined,
 	GiftOutlined,
+	ScheduleOutlined,
 } from "@ant-design/icons";
 
 import {
@@ -28,16 +31,31 @@ import {
 import { useSearchParams } from "react-router-dom";
 import APIs, { enpoints } from "../../configs/APIs";
 import ApplyJobModal from "../ui components/ApplyJobModal";
+import dayjs from "dayjs";
+import Alert from "antd/es/alert/Alert";
+import { UserContext } from "../../App";
+import { isLogin } from "../../authorizations/roleAuth";
+
 const { Title, Text } = Typography;
 
 const JobDetail = () => {
+	const [user, dispatch] = useContext(UserContext);
 	const [q] = useSearchParams();
 	const [job, setJob] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [jobStatus, setJobStatus] = useState({
+		messageType: "",
+		text: "",
+		isPastDue: false,
+	});
 
 	const handleApplyClicked = () => {
-		setIsModalVisible(true);
+		if (isLogin(user)) {
+			setIsModalVisible(true);
+		} else {
+			message.info("Vui lòng đăng nhập để ứng tuyển!");
+		}
 	};
 
 	const handleCancel = () => {
@@ -50,7 +68,6 @@ const JobDetail = () => {
 			const res = await APIs.get(
 				`${enpoints["jobPostHandlder"]}/jobPostId=${q.get("jobPostId")}`,
 			);
-			console.log("data la: ", res.data.result);
 			setJob(res.data.result);
 		} catch (err) {
 			console.error(err);
@@ -58,6 +75,31 @@ const JobDetail = () => {
 			setLoading(false);
 		}
 	};
+
+	useEffect(() => {
+		if (job !== null) {
+			const applicationDueDate = dayjs(job.applicationDueDate);
+			const today = dayjs();
+
+			const isPastDue = applicationDueDate.isBefore(today, "day");
+
+			if (isPastDue) {
+				setJobStatus({
+					messageType: "warning",
+					text: "Đã quá hạn ứng tuyển!",
+					isPastDue: false,
+				});
+			} else {
+				setJobStatus({
+					messageType: "info",
+					text: `Hạn ứng tuyển: ${dayjs(
+						job.applicationDueDate,
+					).format("DD/MM/YYYY")}`,
+					isPastDue: true,
+				});
+			}
+		}
+	}, [job]);
 
 	useEffect(() => {
 		loadJobPost();
@@ -150,7 +192,11 @@ const JobDetail = () => {
 							</Button>
 						</Col>
 						<Col>
-							<Button onClick={handleApplyClicked} type="primary">
+							<Button
+								disabled={!jobStatus.isPastDue}
+								onClick={handleApplyClicked}
+								type="primary"
+							>
 								Ứng tuyển ngay
 							</Button>
 						</Col>
@@ -178,7 +224,7 @@ const JobDetail = () => {
 										textTransform: "uppercase",
 									}}
 								>
-									{job.jobTitle}
+									{job.jobTitle}{" "}
 								</h2>
 								<Descriptions
 									column={5}
@@ -223,6 +269,20 @@ const JobDetail = () => {
 										</span>
 									</Descriptions.Item>
 								</Descriptions>
+								<Alert
+									style={{
+										width: "fit-content",
+										marginTop: 20,
+									}}
+									message={jobStatus.text}
+									type={jobStatus.messageType}
+									icon={
+										<ScheduleOutlined
+											style={{ display: "inline" }}
+										/>
+									}
+									showIcon
+								/>
 							</div>
 						</Col>
 
@@ -338,9 +398,26 @@ const JobDetail = () => {
 									</span>
 								</Descriptions.Item>
 							</Descriptions>
+
+							<Alert
+								style={{
+									width: "fit-content",
+									marginTop: 20,
+								}}
+								message={jobStatus.text}
+								type={jobStatus.messageType}
+								icon={
+									<ScheduleOutlined
+										style={{ display: "inline" }}
+									/>
+								}
+								showIcon
+							/>
 							<Divider />
+
 							<Button
 								type="primary"
+								disabled={!jobStatus.isPastDue}
 								onClick={handleApplyClicked}
 								style={{ marginRight: "16px" }}
 							>
@@ -431,7 +508,9 @@ const JobDetail = () => {
 						</Card>
 						<ApplyJobModal
 							job={job}
-							isModalVisible={isModalVisible}
+							isModalVisible={
+								jobStatus.isPastDue && isModalVisible
+							}
 							handleCancel={handleCancel}
 						/>
 					</Col>

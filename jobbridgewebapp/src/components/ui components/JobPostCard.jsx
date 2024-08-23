@@ -15,7 +15,7 @@ const JobPostCard = ({ jobPost }) => {
 	const navigate = useNavigate();
 
 	const truncateTitle = (title, length) => {
-		return title.length > length
+		return title?.length > length
 			? `${title.substring(0, length)}...`
 			: title;
 	};

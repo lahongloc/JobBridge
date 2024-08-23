@@ -54,5 +54,12 @@ public class JobPostController {
                 .build();
     }
 
+    @PutMapping("/{jobPostId}")
+    ApiResponse<JobPostResponse> updateJobPost(@RequestBody JobPostRequest request,
+                                               @PathVariable("jobPostId") String jobPostId) {
+        return ApiResponse.<JobPostResponse>builder()
+                .result(this.jobPostService.updateJobPost(request, jobPostId))
+                .build();
+    }
 
 }
