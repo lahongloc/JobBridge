@@ -35,6 +35,7 @@ import dayjs from "dayjs";
 import Alert from "antd/es/alert/Alert";
 import { UserContext } from "../../App";
 import { isLogin } from "../../authorizations/roleAuth";
+import FabMenu from "../ui components/FabMenu";
 
 const { Title, Text } = Typography;
 
@@ -202,6 +203,7 @@ const JobDetail = () => {
 						</Col>
 					</Row>
 				</div>
+				<FabMenu jobPostId={job.id} />
 
 				{/* Job Summary and Company Info */}
 				<Card

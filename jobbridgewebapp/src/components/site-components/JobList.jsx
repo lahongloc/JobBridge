@@ -43,7 +43,6 @@ const JobList = () => {
 	};
 
 	useEffect(() => {
-		console.log("user la: ", cookie.load("user"));
 		loadJobPosts(currentPage);
 	}, [currentPage]);
 
@@ -74,21 +73,7 @@ const JobList = () => {
 				<Title level={3} style={{ marginBottom: "24px" }}>
 					Danh sách công việc đã đăng tuyển
 				</Title>
-				{/* <div
-					style={{
-						textAlign: "center",
-						marginTop: "24px",
-						marginBottom: "24px",
-					}}
-				>
-					<Pagination
-						current={currentPage}
-						pageSize={pageSize}
-						total={total}
-						onChange={handlePageChange}
-						showSizeChanger={false} // Không hiển thị thay đổi kích thước trang
-					/>
-				</div> */}
+
 				<Row
 					justify="start"
 					style={{ marginTop: "20px", marginBottom: "20px" }}
@@ -115,6 +100,7 @@ const JobList = () => {
 								jobLocation={job.jobLocation.name}
 								workType={job.workType.name}
 								hiringQuantity={job.hiringQuantity}
+								id={job.id}
 							/>
 						))}
 					</div>

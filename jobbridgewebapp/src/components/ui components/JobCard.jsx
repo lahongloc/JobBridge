@@ -8,7 +8,9 @@ import {
 	EnvironmentOutlined,
 	AppstoreAddOutlined,
 } from "@ant-design/icons";
+import { paths } from "../../authorizations/paths";
 import dayjs from "dayjs";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
@@ -19,7 +21,9 @@ const JobCard = ({
 	jobLocation,
 	workType,
 	hiringQuantity,
+	id,
 }) => {
+	const navigate = useNavigate();
 	return (
 		<Card
 			bordered={false}
@@ -144,6 +148,9 @@ const JobCard = ({
 					bottom: 16,
 					right: 16,
 				}}
+				onClick={() =>
+					navigate(`${paths["job-detail"]}?jobPostId=${id}`)
+				}
 			>
 				Xem chi tiết
 			</Button>

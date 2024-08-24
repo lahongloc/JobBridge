@@ -8,4 +8,5 @@ export const paths = {
 	"upload-cv": "/upload-cv",
 	"job-detail": "/job-detail",
 	"resume-management": "/resume-management",
+	"update-jobPost": "/update-jobPost",
 };

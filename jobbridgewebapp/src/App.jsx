@@ -129,7 +129,7 @@ const App = () => {
 											element={<CVList />}
 										/>
 										<Route
-											path="/"
+											path={paths["update-jobPost"]}
 											element={<JobPostUpdatingForm />}
 										/>
 									</>

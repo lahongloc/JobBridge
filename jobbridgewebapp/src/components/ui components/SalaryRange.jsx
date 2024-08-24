@@ -3,7 +3,7 @@ import { InputNumber, Select, Space } from "antd";
 
 const { Option } = Select;
 
-const SalaryRange = ({ onChange }) => {
+const SalaryRange = ({ onChange, ...props }) => {
 	const [customRange, setCustomRange] = useState([null, null]);
 	const [isCustom, setIsCustom] = useState(false);
 
@@ -27,6 +27,7 @@ const SalaryRange = ({ onChange }) => {
 	return (
 		<Space direction="vertical" style={{ width: "100%" }}>
 			<Select
+				defaultValue={props.default}
 				placeholder="Chọn khoảng lương"
 				onChange={handleSelectChange}
 				style={{ width: "100%" }}
