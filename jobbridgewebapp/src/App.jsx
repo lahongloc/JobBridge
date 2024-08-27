@@ -18,6 +18,8 @@ import CVUpload from "./components/site-components/CVUpload";
 import JobDetail from "./components/site-components/JobDetail";
 import CVList from "./components/site-components/CVList";
 import JobPostUpdatingForm from "./components/site-components/JobPostUpdatingForm";
+import JobPostDetail from "./components/ui components/JobPostDetail";
+import ApplicationList from "./components/site-components/ApplicationList";
 
 export const UserContext = createContext();
 export const WorkTypeContext = createContext();
@@ -135,12 +137,21 @@ const App = () => {
 									</>
 								)}
 								<Route
+									path={paths["application-management"]}
+									element={<ApplicationList />}
+								/>
+								<Route
 									path={paths["job-detail"]}
 									element={<JobDetail />}
 								/>
 								<Route
 									path={paths["upload-cv"]}
 									element={<CVUpload />}
+								/>
+
+								<Route
+									path={paths["job-detail-recruiter-view"]}
+									element={<JobPostDetail />}
 								/>
 
 								<Route

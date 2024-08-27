@@ -9,10 +9,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,6 +26,13 @@ public class ApplicationController {
     ApiResponse<ApplicationResponse> createApplication(@ModelAttribute ApplicationRequest request) throws IOException {
         return ApiResponse.<ApplicationResponse>builder()
                 .result(this.applicationService.createApplication(request))
+                .build();
+    }
+
+    @GetMapping("/get-all-by-user")
+    ApiResponse<List<ApplicationResponse>> getAllByUser() {
+        return ApiResponse.<List<ApplicationResponse>>builder()
+                .result(this.applicationService.getApplicationsByUser())
                 .build();
     }
 }

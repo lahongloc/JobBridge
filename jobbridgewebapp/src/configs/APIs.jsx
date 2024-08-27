@@ -19,6 +19,7 @@ export const enpoints = {
 	getCVsByUser: "/curriculumVitaes/get-cvs-by-user",
 	applicationHandler: "/applications",
 	curriculumVitaeHandler: "/curriculumVitaes",
+	getApplicationsByUser: "/applications/get-all-by-user",
 };
 
 export default axios.create({

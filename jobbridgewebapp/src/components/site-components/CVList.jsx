@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Typography, Space, Popconfirm, message } from "antd";
+import {
+	Table,
+	Button,
+	Typography,
+	Space,
+	Popconfirm,
+	message,
+	Input,
+} from "antd";
 import {
 	FilePdfOutlined,
 	EyeOutlined,
@@ -9,9 +17,11 @@ import APIs, { enpoints } from "../../configs/APIs";
 import cookie from "react-cookies";
 
 const { Text } = Typography;
+const { Search } = Input;
 
 const CVList = () => {
 	const [data, setData] = useState(null);
+	const [filteredData, setFilteredData] = useState(null);
 	const [loading, setLoading] = useState(false);
 
 	const loadData = async () => {
@@ -23,6 +33,7 @@ const CVList = () => {
 				},
 			});
 			setData(res.data.result);
+			setFilteredData(res.data.result);
 		} catch (err) {
 			console.error(err);
 		} finally {
@@ -50,6 +61,13 @@ const CVList = () => {
 			message.error("Xóa CV thất bại!");
 			console.error(err);
 		}
+	};
+
+	const handleSearch = (value) => {
+		const filtered = data.filter((cv) =>
+			cv.name.toLowerCase().includes(value.toLowerCase()),
+		);
+		setFilteredData(filtered);
 	};
 
 	const columns = [
@@ -97,24 +115,37 @@ const CVList = () => {
 
 	return (
 		<>
-			{data !== null && (
-				<Table
-					columns={columns}
-					dataSource={data}
-					pagination={false}
-					rowKey="id"
-					style={{
-						borderRadius: "12px",
-						overflow: "hidden",
-						boxShadow: "0px 6px 18px rgba(0, 0, 0, 0.1)",
-						background: "#fff",
-						width: "80%",
-						margin: "auto",
-						marginTop: "9rem",
-					}}
-					bordered
-					tableLayout="auto"
-				/>
+			{filteredData !== null && (
+				<>
+					<Search
+						placeholder="Tìm kiếm CV theo tên"
+						onSearch={handleSearch}
+						style={{
+							width: "80%",
+							margin: "20px auto",
+							display: "block",
+							marginTop: "9rem",
+						}}
+					/>
+					<Table
+						columns={columns}
+						dataSource={filteredData}
+						pagination={{ pageSize: 5 }}
+						rowKey="id"
+						style={{
+							borderRadius: "12px",
+							overflow: "hidden",
+							boxShadow: "0px 6px 18px rgba(0, 0, 0, 0.1)",
+							background: "#fff",
+							width: "80%",
+							margin: "auto",
+							marginTop: "2rem",
+						}}
+						bordered
+						tableLayout="auto"
+						loading={loading}
+					/>
+				</>
 			)}
 		</>
 	);

@@ -9,4 +9,6 @@ export const paths = {
 	"job-detail": "/job-detail",
 	"resume-management": "/resume-management",
 	"update-jobPost": "/update-jobPost",
+	"job-detail-recruiter-view": "/job-detail-recruiter-view",
+	"application-management": "/application-management",
 };

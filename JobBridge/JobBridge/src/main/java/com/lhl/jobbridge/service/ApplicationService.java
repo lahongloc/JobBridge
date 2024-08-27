@@ -83,4 +83,19 @@ public class ApplicationService {
 
         return this.applicationMapper.toApplicationResponse(application);
     }
+
+    public List<ApplicationResponse> getApplicationsByUser() {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = this.userRepository.findByEmail(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        var curriculumVitaes = user.getCurriculumVitaes();
+        List<Application> applications = new ArrayList<>();
+        curriculumVitaes.forEach(curriculumVitae -> {
+            applications.addAll(this.applicationRepository.findApplicationsByCurriculumVitae(curriculumVitae));
+        });
+
+        return applications.stream().map(this.applicationMapper::toApplicationResponse).toList();
+    }
 }

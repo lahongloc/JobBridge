@@ -149,7 +149,9 @@ const JobCard = ({
 					right: 16,
 				}}
 				onClick={() =>
-					navigate(`${paths["job-detail"]}?jobPostId=${id}`)
+					navigate(
+						`${paths["job-detail-recruiter-view"]}?jobPostId=${id}`,
+					)
 				}
 			>
 				Xem chi tiết
