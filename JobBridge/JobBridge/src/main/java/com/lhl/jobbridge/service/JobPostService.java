@@ -36,6 +36,7 @@ public class JobPostService {
     WorkTypeRepository workTypeRepository;
     JobLocationRepositoty jobLocationRepositoty;
     JobFieldRepository jobFieldRepository;
+    ApplicationRepository applicationRepository;
     JobPostMapper jobPostMapper;
     UserRepository userRepository;
 
@@ -186,5 +187,21 @@ public class JobPostService {
         }
         this.jobPostRepository.save(jobPost);
         return this.jobPostMapper.toJobPostResponse(jobPost);
+    }
+
+    public void deleteJobPost(String jobPostId) {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = this.userRepository.findByEmail(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        JobPost jobPost = this.jobPostRepository.findById(jobPostId).orElseThrow(() -> new AppException(ErrorCode.JOBPOST_NOT_FOUND));
+        if (!jobPost.getUser().getId().equals(user.getId())) {
+            throw new AppException(ErrorCode.JOBPOST_NOT_OWNED_BY_USER);
+        }
+        this.applicationRepository.findApplicationsByJobPost_Id(jobPostId).forEach(application -> {
+            application.setJobPost(null);
+        });
+        this.jobPostRepository.deleteById(jobPostId);
     }
 }

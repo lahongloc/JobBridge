@@ -26,7 +26,6 @@ public class UserController {
 
     @PostMapping("/create-applicant")
     ApiResponse<User> createApplicant(@ModelAttribute @Valid UserCreationRequest request) throws IOException {
-        log.info("user la: " + request);
         ApiResponse<User> apiResponse = new ApiResponse<>();
         apiResponse.setResult(userService.createUser(request, false));
         return apiResponse;
@@ -59,7 +58,8 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    UserResponse updateUser(@PathVariable("userId") String userId, @RequestBody UserUpdateRequest request) {
+    UserResponse updateUser(@PathVariable("userId") String userId, @ModelAttribute UserUpdateRequest request) throws IOException {
+        log.info("request: " + request);
         return this.userService.updateUser(userId, request);
     }
 

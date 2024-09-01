@@ -62,4 +62,10 @@ public class JobPostController {
                 .build();
     }
 
+    @DeleteMapping("/{jobPostId}")
+    ApiResponse<Void> deleteJobpost(@PathVariable("jobPostId") String jobPostId) {
+        this.jobPostService.deleteJobPost(jobPostId);
+        return ApiResponse.<Void>builder().build();
+    }
+
 }

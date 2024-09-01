@@ -65,6 +65,11 @@ const Navbar = () => {
 					label: "Việc làm theo địa điểm",
 					link: "/jobs/location",
 				},
+				{
+					key: "4",
+					label: "Việc làm đã ứng tuyển",
+					link: paths["application-management"],
+				},
 			],
 		},
 		{

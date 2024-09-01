@@ -44,7 +44,6 @@ public class UserService {
             throw new RuntimeException("ErrorCode.USER_EXISTED");
         }
 
-
         User user = this.userMapper.toUser(request);
         if (request.getAvatar() != null && !request.getAvatar().isEmpty()) {
             Map res = this.cloudinary.uploader()
@@ -82,14 +81,30 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found!")));
     }
 
-    public UserResponse updateUser(String userId, UserUpdateRequest request) {
+    public UserResponse updateUser(String userId, UserUpdateRequest request) throws IOException {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-
+        boolean isPasswordNull = false;
+        if (!(request.getPassword() != null && !request.getPassword().isEmpty())) {
+            request.setPassword(user.getPassword());
+            isPasswordNull = true;
+        }
         userMapper.updateUser(user, request);
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        var roles = roleRepository.findAllById(request.getRoles());
-        user.setRoles(new HashSet<>(roles));
+        if (request.getPassword() != null && !request.getPassword().isEmpty() && !isPasswordNull) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        if (request.getRoles() != null && !request.getRoles().isEmpty()) {
+            var roles = roleRepository.findAllById(request.getRoles());
+            user.setRoles(new HashSet<>(roles));
+        }
+
+        if (request.getAvatar() != null && !request.getAvatar().isEmpty()) {
+            Map res = this.cloudinary.uploader()
+                    .upload(request.getAvatar().getBytes(),
+                            ObjectUtils.asMap("resource_type", "auto"));
+            user.setAvatar(res.get("secure_url").toString());
+        }
 
         return userMapper.toUserResponse(userRepository.save(user));
     }

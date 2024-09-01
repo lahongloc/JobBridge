@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface ApplicationRepository extends JpaRepository<Application, String> {
     List<Application> findApplicationsByCurriculumVitae(CurriculumVitae curriculumVitae);
+
+    List<Application> findApplicationsByJobPost_Id(String jobPostId);
 }

@@ -63,6 +63,7 @@ const JobPostUpdatingForm = () => {
 			values.salaryRange = `${min} - ${max} triệu`;
 		}
 		try {
+			console.log("value; ", values);
 			const res = await APIs.put(
 				`${enpoints["jobPostHandlder"]}/${job.id}`,
 				values,

@@ -26,7 +26,7 @@ jobPost:
   recommended-page-size: 4
 
 cloudinary:
-  cloud-name: "dbfh15hki"
-  api-key: "519628963534951"
-  api-secret: "ISEs6g6fSeEfh4pud6TvtYzryb0"
+  cloud-name: "dad8ejn0r"
+  api-key: "916986197549325"
+  api-secret: "8ZDd8GQafg9rc9_h5UrIBt0SZ4Q"
 #    driver-class-name: org.postgresql.Driver
