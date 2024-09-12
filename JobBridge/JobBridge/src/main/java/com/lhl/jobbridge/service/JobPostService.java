@@ -204,4 +204,5 @@ public class JobPostService {
         });
         this.jobPostRepository.deleteById(jobPostId);
     }
+
 }

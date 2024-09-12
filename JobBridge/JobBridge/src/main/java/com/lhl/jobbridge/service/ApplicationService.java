@@ -8,6 +8,7 @@ import com.lhl.jobbridge.dto.response.ApplicationResponse;
 import com.lhl.jobbridge.dto.response.CurriculumVitaeResponse;
 import com.lhl.jobbridge.entity.Application;
 import com.lhl.jobbridge.entity.CurriculumVitae;
+import com.lhl.jobbridge.entity.JobPost;
 import com.lhl.jobbridge.entity.User;
 import com.lhl.jobbridge.exception.AppException;
 import com.lhl.jobbridge.exception.ErrorCode;
@@ -21,6 +22,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -98,4 +100,21 @@ public class ApplicationService {
 
         return applications.stream().map(this.applicationMapper::toApplicationResponse).toList();
     }
+
+    @PreAuthorize("hasRole('RECRUITER')")
+    public List<ApplicationResponse> getApplicationsByJobPost(String jobPostId) {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = this.userRepository.findByEmail(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        JobPost jobPost = this.jobPostRepository.findById(jobPostId).orElseThrow(() -> new AppException(ErrorCode.JOBPOST_NOT_FOUND));
+        if (!jobPost.getUser().getId().equals(user.getId())) {
+            throw new AppException(ErrorCode.JOBPOST_NOT_OWNED_BY_USER);
+        }
+
+        return this.applicationRepository.findApplicationsByJobPost_Id(jobPost.getId())
+                .stream().map(applicationMapper::toApplicationResponse).toList();
+    }
+
 }

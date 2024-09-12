@@ -11,4 +11,5 @@ export const paths = {
 	"update-jobPost": "/update-jobPost",
 	"job-detail-recruiter-view": "/job-detail-recruiter-view",
 	"application-management": "/application-management",
+	"user-profile": "/profile",
 };

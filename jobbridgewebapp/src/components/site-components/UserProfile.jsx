@@ -35,13 +35,18 @@ const UserProfile = () => {
 					Authorization: `Bearer ${cookie.load("token")}`,
 				},
 			});
+
+			const dob = res.data.result.dob
+				? dayjs(res.data.result.dob, "YYYY-DD-MM")
+				: null;
 			setUser({
 				...res.data.result,
-				dob: dayjs(res.data.result.dob, "YYYY-DD-MM"),
+				dob,
 			});
+
 			setInitialUser({
 				...res.data.result,
-				dob: dayjs(res.data.result.dob, "YYYY-DD-MM"),
+				dob,
 			});
 		} catch (err) {
 			console.error(err);
@@ -51,6 +56,13 @@ const UserProfile = () => {
 	useEffect(() => {
 		loadUser();
 	}, []);
+
+	useEffect(() => {
+		// console.log("date la: ");
+		// if (user && user.hasOwnProperty("dob") && user.dob !== null)
+		// 	console.log("khac null");
+		// else console.log(user.dob);
+	}, [user]);
 
 	const [dobError, setDobError] = useState(null);
 
@@ -101,7 +113,6 @@ const UserProfile = () => {
 		formData.append("dob", dayjs(userData.dob).format("YYYY-MM-DD"));
 		formData.append("gender", userData.gender);
 
-		// Only append the avatar file if it exists
 		if (userData.avatarFile) {
 			formData.append("avatar", userData.avatarFile);
 		}
@@ -113,7 +124,6 @@ const UserProfile = () => {
 				{
 					headers: {
 						Authorization: `Bearer ${cookie.load("token")}`,
-						// Do not set Content-Type, let the browser set it automatically
 					},
 				},
 			);
@@ -202,7 +212,11 @@ const UserProfile = () => {
 								<DatePicker
 									placeholder="Ngày sinh (dd/mm/yyyy)"
 									name="dob"
-									value={user.dob ? dayjs(user.dob) : null}
+									value={
+										user.dob
+											? dayjs(user.dob, "DD/MM/YYYY")
+											: null
+									}
 									onChange={handleDateChange}
 									format="DD/MM/YYYY"
 									style={{ marginBottom: 20, width: "100%" }}

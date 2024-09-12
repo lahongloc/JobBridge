@@ -21,6 +21,7 @@ import JobPostUpdatingForm from "./components/site-components/JobPostUpdatingFor
 import JobPostDetail from "./components/ui components/JobPostDetail";
 import ApplicationList from "./components/site-components/ApplicationList";
 import UserProfile from "./components/site-components/UserProfile";
+import ApplicationListJobPost from "./components/site-components/ApplicationListJobPost";
 
 export const UserContext = createContext();
 export const WorkTypeContext = createContext();
@@ -90,9 +91,16 @@ const App = () => {
 											path={paths["update-jobPost"]}
 											element={<JobPostUpdatingForm />}
 										/>
+										<Route
+											path="/"
+											element={<ApplicationListJobPost />}
+										/>
 									</>
 								)}
-								<Route path="/" element={<UserProfile />} />
+								<Route
+									path={paths["user-profile"]}
+									element={<UserProfile />}
+								/>
 								<Route
 									path={paths["application-management"]}
 									element={<ApplicationList />}

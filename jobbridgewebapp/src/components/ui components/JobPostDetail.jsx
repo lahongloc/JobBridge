@@ -16,11 +16,14 @@ import FabMenu from "./FabMenu";
 import { Spin } from "antd";
 import APIs, { enpoints } from "../../configs/APIs";
 import { useSearchParams } from "react-router-dom";
+import ApplicationRecruitView from "./ApplicationRecruitView";
+import cookie from "react-cookies";
 
 const { Title, Text } = Typography;
 const JobPostDetail = () => {
 	const [job, setJob] = useState(null);
 	const [q] = useSearchParams();
+	const [applications, setApplications] = useState(null);
 	const [loading, setLoading] = useState(false);
 
 	const loadJobPost = async () => {
@@ -37,8 +40,26 @@ const JobPostDetail = () => {
 		}
 	};
 
+	const loadApplication = async () => {
+		try {
+			const res = await APIs.get(
+				`${enpoints["applicationHandler"]}/jobPostId=${q.get("jobPostId")}`,
+				{
+					headers: {
+						Authorization: `Bearer ${cookie.load("token")}`,
+					},
+				},
+			);
+			console.log("applicationss; ", res.data.result);
+			setApplications(res.data.result);
+		} catch (err) {
+			console.error(err);
+		}
+	};
+
 	useEffect(() => {
 		loadJobPost();
+		loadApplication();
 	}, []);
 
 	return (
@@ -186,6 +207,17 @@ const JobPostDetail = () => {
 					</Col>
 				)}
 			</Row>
+			<div
+				style={{
+					width: "80%",
+					marginTop: "5rem",
+					margin: "auto",
+				}}
+			>
+				{applications !== null && (
+					<ApplicationRecruitView data={applications} />
+				)}
+			</div>
 		</>
 	);
 };

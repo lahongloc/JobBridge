@@ -35,4 +35,12 @@ public class ApplicationController {
                 .result(this.applicationService.getApplicationsByUser())
                 .build();
     }
+
+    @GetMapping("/jobPostId={jobPostId}")
+    ApiResponse<List<ApplicationResponse>> getApplicationsByJobPost(@PathVariable("jobPostId") String jobPostId) {
+        return ApiResponse.<List<ApplicationResponse>>builder()
+                .result(this.applicationService.getApplicationsByJobPost(jobPostId))
+                .build();
+    }
+
 }

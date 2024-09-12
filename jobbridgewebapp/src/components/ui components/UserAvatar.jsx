@@ -9,6 +9,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { LOGOUT } from "../../reducers/actions";
 import { UserContext } from "../../App";
+import { paths } from "../../authorizations/paths";
 
 const UserAvatar = ({ icon = <UserOutlined /> }) => {
 	const navigate = useNavigate();
@@ -16,8 +17,8 @@ const UserAvatar = ({ icon = <UserOutlined /> }) => {
 
 	const handleMenuClick = ({ key }) => {
 		switch (key) {
-			case "profile":
-				navigate("/profile"); // Replace with your actual route
+			case paths["user-profile"]:
+				navigate(paths["user-profile"]); // Replace with your actual route
 				break;
 			case "changePassword":
 				navigate("/change-password"); // Replace with your actual route
@@ -35,7 +36,7 @@ const UserAvatar = ({ icon = <UserOutlined /> }) => {
 
 	const menu = (
 		<Menu onClick={handleMenuClick}>
-			<Menu.Item key="profile" icon={<SettingOutlined />}>
+			<Menu.Item key={paths["user-profile"]} icon={<SettingOutlined />}>
 				Cài đặt thông tin cá nhân
 			</Menu.Item>
 			<Menu.Item key="changePassword" icon={<LockOutlined />}>
