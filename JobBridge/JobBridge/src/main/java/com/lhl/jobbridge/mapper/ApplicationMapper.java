@@ -13,5 +13,6 @@ public interface ApplicationMapper {
     @Mapping(target = "createdDate", ignore = true)
     Application toApplication(ApplicationRequest request);
 
+    @Mapping(source = "status", target = "status")
     ApplicationResponse toApplicationResponse(Application application);
 }

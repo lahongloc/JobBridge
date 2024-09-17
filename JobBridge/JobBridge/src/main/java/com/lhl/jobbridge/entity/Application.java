@@ -21,6 +21,7 @@ public class Application {
     Date createdDate;
     String hotline;
     String email;
+    String status;
     @ManyToOne
     CurriculumVitae curriculumVitae;
     @ManyToOne

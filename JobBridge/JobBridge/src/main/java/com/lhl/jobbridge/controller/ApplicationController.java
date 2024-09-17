@@ -43,4 +43,12 @@ public class ApplicationController {
                 .build();
     }
 
+    @GetMapping("/applicationId={applicationId}&isRecruiterView={isRecruiterView}")
+    ApiResponse<ApplicationResponse> getApplicationById(@PathVariable("applicationId") String applicationId,
+                                                        @PathVariable("isRecruiterView") boolean isRecruiterView) {
+        return ApiResponse.<ApplicationResponse>builder()
+                .result(this.applicationService.getApplicationById(applicationId, isRecruiterView))
+                .build();
+    }
+
 }

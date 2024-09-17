@@ -26,4 +26,5 @@ public class ApplicationResponse {
     String email;
     CurriculumVitae curriculumVitae;
     JobPost jobPost;
+    String status;
 }

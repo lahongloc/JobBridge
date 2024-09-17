@@ -27,7 +27,9 @@ public enum ErrorCode {
     CURRICULUM_VITAE_NOT_FOUND(1006, "Curriculum vitae not existed", HttpStatus.NOT_FOUND),
     CURRICULUM_VITAE_NOT_OWNED_BY_USER(1003, "CV not owned by this user", HttpStatus.BAD_REQUEST),
     APPLICATION_DUE_DATE_PASSED(1005, "The application due date has passed", HttpStatus.BAD_REQUEST),
-    JOBPOST_NOT_OWNED_BY_USER(1003, "Jobpost not owned by this user", HttpStatus.BAD_REQUEST);
+    JOBPOST_NOT_OWNED_BY_USER(1003, "Jobpost not owned by this user", HttpStatus.BAD_REQUEST),
+    APPLICATION_NOT_FOUND(1006, "Application not found", HttpStatus.NOT_FOUND),
+    NO_PERMISSION_ACCESS_APPLICATION(1003, "Account have no permission to access this application", HttpStatus.UNAUTHORIZED);
 
 
     private int code;

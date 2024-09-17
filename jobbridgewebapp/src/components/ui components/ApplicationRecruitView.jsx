@@ -1,9 +1,12 @@
 import React from "react";
 import { Table, Typography, Tag, Dropdown, Button } from "antd";
+import { useNavigate } from "react-router-dom";
+import { paths } from "../../authorizations/paths";
 
 const { Link } = Typography;
 
 const ApplicationRecruitView = ({ data }) => {
+	const navigate = useNavigate();
 	// Define the columns for the table
 	const columns = [
 		{
@@ -63,10 +66,13 @@ const ApplicationRecruitView = ({ data }) => {
 		{
 			title: "Hành động",
 			key: "action",
-			render: () => (
+			render: (_, record) => (
 				<Button
-					href="#details"
-					onClick={() => console.log("Xem chi tiết")}
+					onClick={() =>
+						navigate(
+							`${paths["application-detail-recruiter-view"]}?applicationId=${record.id}`,
+						)
+					}
 				>
 					Xem chi tiết
 				</Button>

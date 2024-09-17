@@ -21,7 +21,9 @@ import com.lhl.jobbridge.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -41,6 +43,22 @@ public class ApplicationService {
     JobPostRepository jobPostRepository;
     CurriculumVitaeMapper curriculumVitaeMapper;
     UserRepository userRepository;
+
+    @NonFinal
+    @Value("${application.unseen-status}")
+    protected String UNSEEN_STATUS;
+
+    @NonFinal
+    @Value("${application.seen-status}")
+    protected String SEEN_STATUS;
+
+    @NonFinal
+    @Value("${application.suitable-status}")
+    protected String SUITABLE_STATUS;
+
+    @NonFinal
+    @Value("${application.not-suitable-status}")
+    protected String NOT_SUITABLE_STATUS;
 
     public ApplicationResponse createApplication(ApplicationRequest request) throws IOException {
         var jobPost = this.jobPostRepository.findById(request.getJobPost())
@@ -81,8 +99,8 @@ public class ApplicationService {
         application.setCreatedDate(new Date());
         application.setCurriculumVitae(curriculumVitae);
         application.setJobPost(jobPost);
+        application.setStatus(UNSEEN_STATUS);
         this.applicationRepository.save(application);
-
         return this.applicationMapper.toApplicationResponse(application);
     }
 
@@ -115,6 +133,26 @@ public class ApplicationService {
 
         return this.applicationRepository.findApplicationsByJobPost_Id(jobPost.getId())
                 .stream().map(applicationMapper::toApplicationResponse).toList();
+    }
+
+    public ApplicationResponse getApplicationById(String applicationId, boolean isRecruiterView) {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = this.userRepository.findByEmail(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        Application application = this.applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new AppException(ErrorCode.APPLICATION_NOT_FOUND));
+        if (!(user.getCurriculumVitaes().contains(application.getCurriculumVitae()) || application.getJobPost().getUser().getId().equals(user.getId()))) {
+            throw new AppException(ErrorCode.NO_PERMISSION_ACCESS_APPLICATION);
+        }
+
+        if (isRecruiterView && application.getStatus().equals(UNSEEN_STATUS)) {
+            application.setStatus(SEEN_STATUS);
+            this.applicationRepository.save(application);
+        }
+
+        return this.applicationMapper.toApplicationResponse(application);
     }
 
 }

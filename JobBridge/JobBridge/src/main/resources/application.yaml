@@ -29,4 +29,10 @@ cloudinary:
   cloud-name: "dad8ejn0r"
   api-key: "916986197549325"
   api-secret: "8ZDd8GQafg9rc9_h5UrIBt0SZ4Q"
+
+application:
+  unseen-status: "UNSEEN"
+  seen-status: "SEEN"
+  suitable-status: "SUITABLE"
+  not-suitable-status: "NOT_SUITABLE"
 #    driver-class-name: org.postgresql.Driver
