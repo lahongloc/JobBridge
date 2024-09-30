@@ -20,6 +20,7 @@ export const enpoints = {
 	applicationHandler: "/applications",
 	curriculumVitaeHandler: "/curriculumVitaes",
 	getApplicationsByUser: "/applications/get-all-by-user",
+	updateApplicantStatus: "/applications/update-application-status",
 };
 
 export default axios.create({

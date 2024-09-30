@@ -14,6 +14,14 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  rabbitmq:
+    host: 127.0.0.1
+    password: guest
+    port: 5672
+    username: guest
+    virtual-host: job
+    virtual-host-job: jobbridge
+
 
 jwt:
   signerKey: "2OtyvNQV2zxB/n6sueTCLbECW9HDHIbdrJlcqiHd9h2OoX7FIQN+1/jFSklXDoUI"
@@ -35,4 +43,16 @@ application:
   seen-status: "SEEN"
   suitable-status: "SUITABLE"
   not-suitable-status: "NOT_SUITABLE"
-#    driver-class-name: org.postgresql.Driver
+
+spring-mail:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: locla2405@gmail.com
+    password: mxefvqoykuezxuwz
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true

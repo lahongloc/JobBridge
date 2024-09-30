@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông báo kết quả tuyển dụng</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            color: #2a9d8f;
+        }
+
+        .info {
+            margin-bottom: 10px;
+        }
+
+        .info strong {
+            display: inline-block;
+            width: 150px;
+        }
+
+        .status {
+            font-weight: bold;
+            color: #e76f51;
+        }
+
+        .content {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9f5f5;
+            border-left: 4px solid #2a9d8f;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Kết quả tuyển dụng cho vị trí "<span th:text="${jobTitle}"></span>"</h2>
+
+    <p class="info"><strong>Tên ứng viên:</strong> <span th:text="${applicantName}"></span></p>
+    <p class="info"><strong>Tên công ty:</strong> <span th:text="${companyName}"></span></p>
+    <p class="info"><strong>Trạng thái hồ sơ:</strong> <span class="status" th:text="${status}"></span></p>
+
+    <div class="content">
+        <p><strong>Chủ đề email từ nhà tuyển dụng:</strong></p>
+        <p th:text="${recruiterMailSubject}"></p>
+
+        <p><strong>Nội dung email:</strong></p>
+        <p th:text="${recruiterMailContent}"></p>
+    </div>
+
+    <p>Nếu có bất kỳ câu hỏi nào, vui lòng trả lời email này hoặc liên hệ với bộ phận Nhân sự của chúng tôi.</p>
+
+    <p>Trân trọng,</p>
+    <p><strong>Đội ngũ tuyển dụng</strong></p>
+</div>
+</body>
+</html>

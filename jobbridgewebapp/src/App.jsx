@@ -166,7 +166,7 @@ const App = () => {
 											}
 											element={
 												<ApplicationDetail
-													data={data}
+												// data={data}
 												/>
 											}
 										/>

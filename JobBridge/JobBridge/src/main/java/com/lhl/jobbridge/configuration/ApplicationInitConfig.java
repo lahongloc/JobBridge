@@ -17,10 +17,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
 
 @Configuration
 @RequiredArgsConstructor
@@ -190,7 +193,31 @@ public class ApplicationInitConfig {
         );
 
         this.jobFieldService.saveAllJobFieldsIfNotExists(jobFields);
-
     }
 
+    @NonFinal
+    @Value("${spring-mail.mail.username}")
+    protected String MAIL_USERNAME;
+
+    @NonFinal
+    @Value("${spring-mail.mail.password}")
+    protected String MAIL_PASSWORD;
+
+    @Bean
+    public JavaMailSender javaMailSender() {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost("smtp.gmail.com");
+        mailSender.setPort(587);
+
+        mailSender.setUsername(MAIL_USERNAME);
+        mailSender.setPassword(MAIL_PASSWORD);
+
+        Properties properties = mailSender.getJavaMailProperties();
+        properties.put("mail.transport.protocol", "smtp");
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.debug", "true");
+
+        return mailSender;
+    }
 }

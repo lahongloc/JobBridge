@@ -2,8 +2,11 @@ package com.lhl.jobbridge.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.lhl.jobbridge.constants.JobQueue;
 import com.lhl.jobbridge.dto.request.ApplicationRequest;
 import com.lhl.jobbridge.dto.request.CurriculumVitaeRequest;
+import com.lhl.jobbridge.dto.request.JobApplicationMessageRequest;
+import com.lhl.jobbridge.dto.request.MailSenderRequest;
 import com.lhl.jobbridge.dto.response.ApplicationResponse;
 import com.lhl.jobbridge.dto.response.CurriculumVitaeResponse;
 import com.lhl.jobbridge.entity.Application;
@@ -23,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,6 +47,8 @@ public class ApplicationService {
     JobPostRepository jobPostRepository;
     CurriculumVitaeMapper curriculumVitaeMapper;
     UserRepository userRepository;
+    MyEmailService myEmailService;
+    RabbitTemplate rabbitTemplate;
 
     @NonFinal
     @Value("${application.unseen-status}")
@@ -59,6 +65,41 @@ public class ApplicationService {
     @NonFinal
     @Value("${application.not-suitable-status}")
     protected String NOT_SUITABLE_STATUS;
+
+    @PreAuthorize("hasRole('RECRUITER')")
+    public void updateApplicationStatus(String applicationId, boolean isSuitable, MailSenderRequest request) {
+        Application application = this.applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new AppException(ErrorCode.APPLICATION_NOT_FOUND));
+
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = this.userRepository.findByEmail(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        if (!application.getJobPost().getUser().getId().equals(user.getId())) {
+            throw new AppException(ErrorCode.NO_PERMISSION_ACCESS_APPLICATION);
+        }
+
+        if (isSuitable) {
+            application.setStatus(SUITABLE_STATUS);
+        } else application.setStatus(NOT_SUITABLE_STATUS);
+        this.applicationRepository.save(application);
+
+        Optional<User> applicant = this.userRepository.findByCurriculumVitaes_Id(application.getCurriculumVitae().getId());
+
+        JobApplicationMessageRequest messageRequest = JobApplicationMessageRequest.builder()
+                .applicantName(applicant.get().getFullname())
+                .companyName(application.getJobPost().getUser().getCompanyName())
+                .jobTitle(application.getJobPost().getJobTitle())
+                .status(isSuitable ? "Hồ sơ phù hợp" : "Hồ sơ chưa phù hợp")
+                .recruiterMailSubject(request.getSubject())
+                .recruiterMailContent(request.getText())
+                .to(request.getTo())
+                .build();
+        this.rabbitTemplate.convertAndSend(JobQueue.JOB_APPLICATION_QUEUE, messageRequest);
+
+//        this.myEmailService.sendEmail(request.getTo(), request.getSubject(), request.getText());
+    }
 
     public ApplicationResponse createApplication(ApplicationRequest request) throws IOException {
         var jobPost = this.jobPostRepository.findById(request.getJobPost())

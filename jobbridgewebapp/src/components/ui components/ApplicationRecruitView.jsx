@@ -54,10 +54,12 @@ const ApplicationRecruitView = ({ data }) => {
 				switch (status?.trim() || "") {
 					case "SEEN":
 						return <Tag color="blue">Đã xem</Tag>;
-					case "MATCH":
+					case "SUITABLE":
 						return <Tag color="green">Hồ sơ phù hợp</Tag>;
-					case "NOT_MATCH":
+					case "NOT_SUITABLE":
 						return <Tag color="red">Hồ sơ không phù hợp</Tag>;
+					case "UNSEEN":
+						return <Tag color="gray">Chưa xem</Tag>;
 					default:
 						return <Tag color="gray">Chưa xem</Tag>;
 				}
@@ -100,7 +102,7 @@ const ApplicationRecruitView = ({ data }) => {
 					columns={columns}
 					dataSource={data}
 					rowKey="id"
-					pagination={{ pageSize: 5 }} // Enable pagination with 5 rows per page
+					pagination={{ pageSize: 5 }}
 				/>
 			</div>
 		</div>
