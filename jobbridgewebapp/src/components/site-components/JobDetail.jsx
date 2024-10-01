@@ -507,6 +507,7 @@ const JobDetail = () => {
 							</Descriptions>
 						</Card>
 						<ApplyJobModal
+							user={user}
 							job={job}
 							isModalVisible={
 								jobStatus.isPastDue && isModalVisible

@@ -1,9 +1,6 @@
 package com.lhl.jobbridge.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -19,4 +16,6 @@ public class JobField {
     String id;
     String name;
     String englishName;
+    @ManyToOne
+    JobFieldGroup jobFieldGroup;
 }

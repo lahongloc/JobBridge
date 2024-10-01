@@ -16,4 +16,6 @@ public interface JobPostRepository extends JpaRepository<JobPost, String>, JpaSp
 
     Page<JobPost> findByJobTitleContainingIgnoreCaseAndJobLocation_NameContainingIgnoreCaseAndWorkType_NameContainingIgnoreCase(
             String jobTitle, String jobLocationName, String workTypeName, Pageable pageable);
+
+    List<JobPost> findAllByJobField_JobFieldGroup_Id(String jobFieldGroupId);
 }

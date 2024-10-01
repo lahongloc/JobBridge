@@ -5,11 +5,13 @@ import com.cloudinary.utils.ObjectUtils;
 import com.lhl.jobbridge.dto.request.CurriculumVitaeRequest;
 import com.lhl.jobbridge.dto.response.CurriculumVitaeResponse;
 import com.lhl.jobbridge.entity.CurriculumVitae;
+import com.lhl.jobbridge.entity.JobField;
 import com.lhl.jobbridge.entity.User;
 import com.lhl.jobbridge.exception.AppException;
 import com.lhl.jobbridge.exception.ErrorCode;
 import com.lhl.jobbridge.mapper.CurriculumVitaeMapper;
 import com.lhl.jobbridge.repository.CurriculumVitaeRepository;
+import com.lhl.jobbridge.repository.JobFieldRepository;
 import com.lhl.jobbridge.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,7 @@ public class CurriculumVitaeService {
     CurriculumVitaeRepository curriculumVitaeRepository;
     UserRepository userRepository;
     CurriculumVitaeMapper curriculumVitaeMapper;
+    JobFieldRepository jobFieldRepository;
     Cloudinary cloudinary;
 
     public CurriculumVitaeResponse uploadCV(CurriculumVitaeRequest request) throws IOException {
@@ -44,6 +47,9 @@ public class CurriculumVitaeService {
             throw new AppException(ErrorCode.FILE_FORMAT_ERROR);
         }
 
+        String jobFieldName = request.getJobField();
+        JobField jobField = this.jobFieldRepository.findByEnglishName(jobFieldName);
+
         try {
             Map res = cloudinary.uploader().upload(
                     request.getCVFile().getBytes(),
@@ -55,6 +61,7 @@ public class CurriculumVitaeService {
                     .name(request.getName())
                     .filePath(secureUrl)
                     .build();
+            curriculumVitae.setJobField(jobField);
             curriculumVitaeRepository.save(curriculumVitae);
 
             var context = SecurityContextHolder.getContext();

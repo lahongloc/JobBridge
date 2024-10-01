@@ -9,6 +9,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface CurriculumVitaeMapper {
+    @Mapping(source = "jobField", target = "jobFieldResponse")
     CurriculumVitaeResponse toCurriculumVitaeResponse(CurriculumVitae curriculumVitae);
 
     @Mapping(target = "jobField", ignore = true)

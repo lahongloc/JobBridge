@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -203,6 +204,18 @@ public class JobPostService {
             application.setJobPost(null);
         });
         this.jobPostRepository.deleteById(jobPostId);
+    }
+
+    public List<JobPostResponse> getJobPostsByJobFieldGroup(String jobFieldGroupId) {
+        return this.jobPostRepository.findAllByJobField_JobFieldGroup_Id(jobFieldGroupId)
+                .stream().map(jobPostMapper::toJobPostResponse).toList();
+    }
+
+    public List<JobPostResponse> getGroupOfJobPosts(String jobFieldId) {
+        JobField jobField = this.jobFieldRepository.
+                findById(jobFieldId).orElseThrow(() -> new AppException(ErrorCode.JOBFIELD_NOT_FOUND));
+
+        return getJobPostsByJobFieldGroup(jobField.getJobFieldGroup().getId());
     }
 
 }

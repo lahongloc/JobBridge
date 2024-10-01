@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatusCode;
 @Getter
 public enum ErrorCode {
     INVALID_KEY(1001, "Invalid Message Key!", HttpStatus.BAD_REQUEST),
+    JOB_FIELD_GROUP_NOT_FOUND(1004, "Job Field Group Not Found", HttpStatus.NOT_FOUND),
     UNCATEGORIZED_EXCEPTION(9999, "Uncategorized exception!", HttpStatus.INTERNAL_SERVER_ERROR),
     USER_EXISTED(1002, "User existed!", HttpStatus.BAD_REQUEST),
     USERNAME_INVALID(1003, "Username must be at least {min} characters", HttpStatus.BAD_REQUEST),

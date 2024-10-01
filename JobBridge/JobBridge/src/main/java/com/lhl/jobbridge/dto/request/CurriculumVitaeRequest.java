@@ -14,4 +14,5 @@ import java.util.Set;
 public class CurriculumVitaeRequest {
     String name;
     MultipartFile CVFile;
+    String jobField;
 }

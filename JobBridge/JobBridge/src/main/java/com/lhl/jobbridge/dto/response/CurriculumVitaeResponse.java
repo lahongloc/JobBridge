@@ -17,4 +17,5 @@ public class CurriculumVitaeResponse {
     String id;
     String name;
     String filePath;
+    JobFieldResponse jobFieldResponse;
 }

@@ -30,7 +30,6 @@ public class JobPostController {
                 .build();
     }
 
-
     @GetMapping("/get-by-user/page={pageNumber}")
     ApiResponse<Page<JobPostResponse>> getByUser(
             @PathVariable int pageNumber
@@ -68,4 +67,10 @@ public class JobPostController {
         return ApiResponse.<Void>builder().build();
     }
 
+    @GetMapping("/get-by-job-field-group/{jobFieldId}")
+    ApiResponse<List<JobPostResponse>> getGroupOfJobPosts(@PathVariable("jobFieldId") String jobFieldId) {
+        return ApiResponse.<List<JobPostResponse>>builder()
+                .result(this.jobPostService.getGroupOfJobPosts(jobFieldId))
+                .build();
+    }
 }

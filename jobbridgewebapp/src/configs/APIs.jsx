@@ -21,6 +21,7 @@ export const enpoints = {
 	curriculumVitaeHandler: "/curriculumVitaes",
 	getApplicationsByUser: "/applications/get-all-by-user",
 	updateApplicantStatus: "/applications/update-application-status",
+	getGroupOfJobPosts: "/jobPosts/get-by-job-field-group",
 };
 
 export default axios.create({

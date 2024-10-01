@@ -1,6 +1,9 @@
 package com.lhl.jobbridge.configuration;
 
 import com.cloudinary.Cloudinary;
+import com.lhl.jobbridge.exception.AppException;
+import com.lhl.jobbridge.exception.ErrorCode;
+import com.lhl.jobbridge.repository.JobFieldGroupRepository;
 import org.springframework.beans.factory.annotation.Value;
 import com.cloudinary.utils.ObjectUtils;
 import com.lhl.jobbridge.entity.*;
@@ -36,6 +39,7 @@ public class ApplicationInitConfig {
     WorkTypeService workTypeService;
     JobLocationService jobLocationService;
     JobFieldService jobFieldService;
+    JobFieldGroupRepository jobFieldGroupRepository;
 
     @NonFinal
     @Value("${cloudinary.cloud-name}")
@@ -62,6 +66,7 @@ public class ApplicationInitConfig {
         return args -> {
             initializeWorkType();
             initilaizeJobLocation();
+            initJobFieldGroup();
             initializeJobField();
             Role adminRole = Role.builder().name("ADMIN").description("admin role").build();
             Role applicantRole = Role.builder().name("APPLICANT").description("applicant role").build();
@@ -166,30 +171,57 @@ public class ApplicationInitConfig {
         this.jobLocationService.saveAllJobLocationsIfNotExists(jobLocations);
     }
 
+    void initJobFieldGroup() {
+        if (this.jobFieldGroupRepository.count() == 0) {
+            List<JobFieldGroup> jobFieldGroups = List.of(
+                    JobFieldGroup.builder().name("Business and Finance").id("BAF").build(),
+                    JobFieldGroup.builder().name("Technology and Logistics").id("TAL").build(),
+                    JobFieldGroup.builder().name("Marketing and Public Relations").id("MAPR").build(),
+                    JobFieldGroup.builder().name("Human Resources and Law").id("HRAL").build(),
+                    JobFieldGroup.builder().name("Construction and Engineering").id("CAE").build(),
+                    JobFieldGroup.builder().name("Art and Design").id("AAD").build(),
+                    JobFieldGroup.builder().name("Education and Training").id("EAT").build(),
+                    JobFieldGroup.builder().name("Aviation and Healthcare").id("AAH").build()
+            );
+            this.jobFieldGroupRepository.saveAll(jobFieldGroups);
+        }
+
+    }
+
     void initializeJobField() {
+        JobFieldGroup baf = this.jobFieldGroupRepository.findById("BAF").orElseThrow(() -> new AppException(ErrorCode.JOB_FIELD_GROUP_NOT_FOUND));
+        JobFieldGroup tal = this.jobFieldGroupRepository.findById("TAL").orElseThrow(() -> new AppException(ErrorCode.JOB_FIELD_GROUP_NOT_FOUND));
+        JobFieldGroup marp = this.jobFieldGroupRepository.findById("MAPR").orElseThrow(() -> new AppException(ErrorCode.JOB_FIELD_GROUP_NOT_FOUND));
+        JobFieldGroup hral = this.jobFieldGroupRepository.findById("HRAL").orElseThrow(() -> new AppException(ErrorCode.JOB_FIELD_GROUP_NOT_FOUND));
+        JobFieldGroup cae = this.jobFieldGroupRepository.findById("CAE").orElseThrow(() -> new AppException(ErrorCode.JOB_FIELD_GROUP_NOT_FOUND));
+        JobFieldGroup aad = this.jobFieldGroupRepository.findById("AAD").orElseThrow(() -> new AppException(ErrorCode.JOB_FIELD_GROUP_NOT_FOUND));
+        JobFieldGroup eat = this.jobFieldGroupRepository.findById("EAT").orElseThrow(() -> new AppException(ErrorCode.JOB_FIELD_GROUP_NOT_FOUND));
+        JobFieldGroup aah = this.jobFieldGroupRepository.findById("AAH").orElseThrow(() -> new AppException(ErrorCode.JOB_FIELD_GROUP_NOT_FOUND));
+
         List<JobField> jobFields = List.of(
-                JobField.builder().name("Công nghệ thông tin").englishName("INFORMATION-TECHNOLOGY").build(),
-                JobField.builder().name("Kế toán").englishName("ACCOUNTANT").build(),
-                JobField.builder().name("Marketing").englishName("MARKETING").build(),
-                JobField.builder().name("Nhân sự").englishName("HR").build(),
-                JobField.builder().name("Bán hàng").englishName("SALES").build(),
-                JobField.builder().name("Thiết kế đồ họa").englishName("DESIGNER").build(),
-                JobField.builder().name("Kỹ thuật").englishName("ENGINEERING").build(),
-                JobField.builder().name("Ngân hàng").englishName("BANKING").build(),
-                JobField.builder().name("Y tế").englishName("HEALTHCARE").build(),
-                JobField.builder().name("Giáo dục").englishName("TEACHER").build(),
-                JobField.builder().name("Luật pháp").englishName("ADVOCATE").build(),
-                JobField.builder().name("Dịch vụ khách hàng").englishName("PUBLIC-RELATIONS").build(),
-                JobField.builder().name("Logistics").englishName("LOGISTICS").build(),
-                JobField.builder().name("Nghệ thuật").englishName("ARTS").build(),
-                JobField.builder().name("Kinh doanh quốc tế").englishName("BUSINESS-DEVELOPMENT").build(),
-                JobField.builder().name("Xây dựng").englishName("CONSTRUCTION").build(),
-                JobField.builder().name("Bất động sản").englishName("REAL ESTATE").build(),
-                JobField.builder().name("Nhà hàng - Khách sạn").englishName("BPO").build(),
-                JobField.builder().name("Hàng không").englishName("AVIATION").build(),
-                JobField.builder().name("Tài chính").englishName("FINANCE").build(),
-                JobField.builder().name("Tư vấn viên").englishName("CONSULTANT").build(),
-                JobField.builder().name("Thể hình").englishName("FITNESS").build()
+                JobField.builder().name("Công nghệ thông tin").englishName("INFORMATION-TECHNOLOGY").jobFieldGroup(tal).build(),
+                JobField.builder().name("Kế toán").englishName("ACCOUNTANT").jobFieldGroup(baf).build(),
+                JobField.builder().name("Marketing").englishName("MARKETING").jobFieldGroup(marp).build(),
+                JobField.builder().name("Nhân sự").englishName("HR").jobFieldGroup(hral).build(),
+                JobField.builder().name("Bán hàng").englishName("SALES").jobFieldGroup(baf).build(),
+                JobField.builder().name("Thiết kế đồ họa").englishName("DESIGNER").jobFieldGroup(aad).build(),
+                JobField.builder().name("Kỹ thuật").englishName("ENGINEERING").jobFieldGroup(cae).build(),
+                JobField.builder().name("Ngân hàng").englishName("BANKING").jobFieldGroup(baf).build(),
+                JobField.builder().name("Y tế").englishName("HEALTHCARE").jobFieldGroup(aah).build(),
+                JobField.builder().name("Giáo dục").englishName("TEACHER").jobFieldGroup(eat).build(),
+                JobField.builder().name("Luật pháp").englishName("ADVOCATE").jobFieldGroup(hral).build(),
+                JobField.builder().name("Dịch vụ khách hàng").englishName("PUBLIC-RELATIONS").jobFieldGroup(marp).build(),
+                JobField.builder().name("Logistics").englishName("LOGISTICS").jobFieldGroup(tal).build(),
+                JobField.builder().name("Nghệ thuật").englishName("ARTS").jobFieldGroup(aad).build(),
+                JobField.builder().name("Kinh doanh quốc tế").englishName("BUSINESS-DEVELOPMENT").jobFieldGroup(baf).build(),
+                JobField.builder().name("Xây dựng").englishName("CONSTRUCTION").jobFieldGroup(cae).build(),
+                JobField.builder().name("Bất động sản").englishName("REAL ESTATE").jobFieldGroup(baf).build(),
+                JobField.builder().name("Nhà hàng - Khách sạn").englishName("BPO").jobFieldGroup(tal).build(),
+                JobField.builder().name("Hàng không").englishName("AVIATION").jobFieldGroup(aah).build(),
+                JobField.builder().name("Tài chính").englishName("FINANCE").jobFieldGroup(baf).build(),
+                JobField.builder().name("Tư vấn viên").englishName("CONSULTANT").jobFieldGroup(baf).build(),
+                JobField.builder().name("Thể hình").englishName("FITNESS").jobFieldGroup(eat).build(),
+                JobField.builder().name("Truyền thông phương tiện").englishName("DIGITAL-MEDIA").jobFieldGroup(marp).build()
         );
 
         this.jobFieldService.saveAllJobFieldsIfNotExists(jobFields);

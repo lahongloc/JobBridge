@@ -22,12 +22,12 @@ const { Title, Text } = Typography;
 import cookie from "react-cookies";
 import APIs, { enpoints } from "../../configs/APIs";
 
-const ApplyJobModal = ({ job, isModalVisible, handleCancel }) => {
+const ApplyJobModal = ({ job, isModalVisible, handleCancel, user }) => {
 	const [selectedOption, setSelectedOption] = useState("library"); // 'library' or 'upload'
 	const [selectedCV, setSelectedCV] = useState(null);
 	const [uploadedFile, setUploadedFile] = useState(null);
 	const [phoneNumber, setPhoneNumber] = useState(""); // State for Phone Number
-	const [email, setEmail] = useState(""); // State for Email
+	const [email, setEmail] = useState(user.email); // State for Email
 	const [loading, setLoading] = useState(false);
 
 	const handleOptionChange = (option) => {

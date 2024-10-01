@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface JobFieldRepository extends JpaRepository<JobField, String> {
     boolean existsByName(String name);
+
+    JobField findByEnglishName(String name);
 }
