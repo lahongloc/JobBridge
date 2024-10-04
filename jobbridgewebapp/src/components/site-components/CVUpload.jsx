@@ -53,72 +53,23 @@ const CVUpload = () => {
 	const handleUpload = async () => {
 		setLoading(true);
 		try {
-			const cvFormData = new FormData();
-			cvFormData.append("file", file);
-			const cvTypeRes = await ModelsAPIs.post(
-				modelEnpoints["cvClassify"],
-				cvFormData,
-				{
-					headers: {
-						"Content-Type": "multipart/form-data",
-					},
+			const formData = new FormData();
+			formData.append("name", cvName);
+			formData.append("CVFile", file);
+			const res = await APIs.post(enpoints["uploadCV"], formData, {
+				headers: {
+					Authorization: `Bearer ${cookie.load("token")}`,
+					"Content-Type": "multipart/form-data",
 				},
-			);
+			});
 
-			console.log(cvTypeRes.data.code);
-			if (cvTypeRes.data.code == 200) {
-				const formData = new FormData();
-				formData.append("name", cvName);
-				formData.append("CVFile", file);
-				formData.append("jobField", cvTypeRes.data.cvType);
-				const res = await APIs.post(enpoints["uploadCV"], formData, {
-					headers: {
-						Authorization: `Bearer ${cookie.load("token")}`,
-						"Content-Type": "multipart/form-data",
-					},
-				});
-
-				const relatedJobPostRes = await APIs.get(
-					`${enpoints["getGroupOfJobPosts"]}/${res.data.result.jobFieldResponse.id}`,
-					{
-						headers: {
-							Authorization: `Bearer ${cookie.load("token")}`,
-						},
-					},
-				);
-				console.log(
-					"jobpost lien quan la: ",
-					relatedJobPostRes.data.result,
-				);
-
-				const relatedJobPosts = relatedJobPostRes.data.result;
-				for (const jobPost of relatedJobPosts) {
-					var jobString =
-						jobPost.jobDescription + jobPost.requirements;
-					let matchingForm = new FormData();
-					matchingForm.append("jd_text", jobString);
-					matchingForm.append("file", file);
-					const similarityRes = await ModelsAPIs.post(
-						modelEnpoints["cvMatching"],
-						matchingForm,
-						{
-							headers: {
-								"Content-Type": "multipart/form-data",
-							},
-						},
-					);
-
-					console.log("do tuong thich la: ", similarityRes.data);
-				}
-
-				setFile(null);
-				setCvName("");
-				messageApi.open({
-					type: "success",
-					content: "Tải lên CV thành công!",
-				});
-				console.log("thanh cong");
-			} else console.log("that bai");
+			setFile(null);
+			setCvName("");
+			messageApi.open({
+				type: "success",
+				content: "Tải lên CV thành công!",
+			});
+			console.log("thanh cong");
 		} catch (err) {
 			messageApi.open({
 				type: "error",

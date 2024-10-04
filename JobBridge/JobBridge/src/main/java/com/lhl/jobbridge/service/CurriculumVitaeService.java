@@ -19,6 +19,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -36,7 +37,9 @@ public class CurriculumVitaeService {
     CurriculumVitaeMapper curriculumVitaeMapper;
     JobFieldRepository jobFieldRepository;
     Cloudinary cloudinary;
+    ApiService apiService;
 
+    @Transactional
     public CurriculumVitaeResponse uploadCV(CurriculumVitaeRequest request) throws IOException {
         if (request.getCVFile() == null || request.getCVFile().isEmpty()) {
             throw new AppException(ErrorCode.FILE_EMPTY);
@@ -47,9 +50,6 @@ public class CurriculumVitaeService {
             throw new AppException(ErrorCode.FILE_FORMAT_ERROR);
         }
 
-        String jobFieldName = request.getJobField();
-        JobField jobField = this.jobFieldRepository.findByEnglishName(jobFieldName);
-
         try {
             Map res = cloudinary.uploader().upload(
                     request.getCVFile().getBytes(),
@@ -57,6 +57,9 @@ public class CurriculumVitaeService {
             );
 
             String secureUrl = (String) res.get("secure_url");
+            String CVType = this.apiService.classifyCV(secureUrl);
+            JobField jobField = this.jobFieldRepository.findByEnglishName(CVType);
+
             CurriculumVitae curriculumVitae = CurriculumVitae.builder()
                     .name(request.getName())
                     .filePath(secureUrl)

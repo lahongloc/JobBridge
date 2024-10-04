@@ -53,7 +53,6 @@ public class JobPostService {
     @Value("${jobPost.recommended-page-size}")
     protected String RECOMMENDED_PAGE_SIZE;
 
-
     public JobPostResponse getById(String id) {
         return this.jobPostMapper.toJobPostResponse(this.jobPostRepository
                 .findById(id).orElseThrow(() -> new AppException(ErrorCode.JOBPOST_NOT_FOUND)));

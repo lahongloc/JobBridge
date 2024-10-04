@@ -5,12 +5,14 @@ import com.lhl.jobbridge.dto.request.ApiResponse;
 import com.lhl.jobbridge.dto.request.JobPostRequest;
 import com.lhl.jobbridge.dto.request.JobPostSearchRequest;
 import com.lhl.jobbridge.dto.response.JobPostResponse;
+import com.lhl.jobbridge.service.ApiService;
 import com.lhl.jobbridge.service.JobPostService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -73,4 +75,12 @@ public class JobPostController {
                 .result(this.jobPostService.getGroupOfJobPosts(jobFieldId))
                 .build();
     }
+
+    ApiService apiService;
+
+    @GetMapping("/classify")
+    String classify(@RequestParam("cv_link") String cv_link) {
+        return this.apiService.classifyCV(cv_link);
+    }
+
 }

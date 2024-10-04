@@ -22,6 +22,7 @@ export const enpoints = {
 	getApplicationsByUser: "/applications/get-all-by-user",
 	updateApplicantStatus: "/applications/update-application-status",
 	getGroupOfJobPosts: "/jobPosts/get-by-job-field-group",
+	jobRecommendationHandler: "/jobRecommendations",
 };
 
 export default axios.create({
