@@ -4,18 +4,28 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.lhl.jobbridge.dto.request.UserCreationRequest;
 import com.lhl.jobbridge.dto.request.UserUpdateRequest;
+import com.lhl.jobbridge.dto.response.RoleStatisticResponse;
 import com.lhl.jobbridge.dto.response.UserResponse;
+import com.lhl.jobbridge.entity.JobField;
+import com.lhl.jobbridge.entity.JobPost;
 import com.lhl.jobbridge.entity.Role;
 import com.lhl.jobbridge.entity.User;
 import com.lhl.jobbridge.exception.AppException;
 import com.lhl.jobbridge.exception.ErrorCode;
 import com.lhl.jobbridge.mapper.UserMapper;
+import com.lhl.jobbridge.repository.JobFieldRepository;
+import com.lhl.jobbridge.repository.JobPostRepository;
 import com.lhl.jobbridge.repository.RoleRepository;
 import com.lhl.jobbridge.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,10 +33,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +45,10 @@ public class UserService {
     PasswordEncoder passwordEncoder;
     RoleRepository roleRepository;
     Cloudinary cloudinary;
+
+    @NonFinal
+    @Value("${company.size}")
+    protected String PAGE_SIZE;
 
     public User createUser(UserCreationRequest request, boolean isRecuiter) throws IOException {
         if (this.userRepository.existsUserByEmail(request.getEmail())) {
@@ -88,6 +99,10 @@ public class UserService {
             request.setPassword(user.getPassword());
             isPasswordNull = true;
         }
+        if (!(request.getCompanyName() != null && !request.getCompanyName().isEmpty())) {
+            request.setCompanyName(user.getCompanyName());
+        }
+
         userMapper.updateUser(user, request);
 
         if (request.getPassword() != null && !request.getPassword().isEmpty() && !isPasswordNull) {
@@ -121,4 +136,29 @@ public class UserService {
     public void deleteUser(String userId) {
         this.userRepository.deleteById(userId);
     }
+
+    public Page<UserResponse> getRecruiters(int pageNumber) {
+        Role role = this.roleRepository.findById("RECRUITER")
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+
+        Pageable pageable = PageRequest.of(pageNumber - 1, Integer.parseInt(PAGE_SIZE));
+
+        Page<User> recruiterPage = this.userRepository.findAllByRolesContaining(role, pageable);
+
+        return recruiterPage.map(this.userMapper::toUserResponse);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public RoleStatisticResponse roleStatistic() {
+        Role roleApplicant = this.roleRepository.findById("APPLICANT")
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+        Role roleRecruiter = this.roleRepository.findById("RECRUITER")
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+
+        return RoleStatisticResponse.builder()
+                .applicantNumber(this.userRepository.countByRolesContains(roleApplicant))
+                .recruiterNumber(this.userRepository.countByRolesContains(roleRecruiter))
+                .build();
+    }
+
 }

@@ -34,7 +34,7 @@ import ApplyJobModal from "../ui components/ApplyJobModal";
 import dayjs from "dayjs";
 import Alert from "antd/es/alert/Alert";
 import { UserContext } from "../../App";
-import { isLogin } from "../../authorizations/roleAuth";
+import { isApplicant, isLogin } from "../../authorizations/roleAuth";
 
 const { Title, Text } = Typography;
 
@@ -51,10 +51,12 @@ const JobDetail = () => {
 	});
 
 	const handleApplyClicked = () => {
-		if (isLogin(user)) {
+		if (isApplicant(user)) {
 			setIsModalVisible(true);
 		} else {
-			message.info("Vui lòng đăng nhập để ứng tuyển!");
+			message.info(
+				"Vui lòng đăng nhập với vai trò là ứng viên tìm việc để ứng tuyển!",
+			);
 		}
 	};
 
@@ -506,14 +508,17 @@ const JobDetail = () => {
 								</Descriptions.Item>
 							</Descriptions>
 						</Card>
-						<ApplyJobModal
-							user={user}
-							job={job}
-							isModalVisible={
-								jobStatus.isPastDue && isModalVisible
-							}
-							handleCancel={handleCancel}
-						/>
+
+						{isApplicant(user) && (
+							<ApplyJobModal
+								user={user}
+								job={job}
+								isModalVisible={
+									jobStatus.isPastDue && isModalVisible
+								}
+								handleCancel={handleCancel}
+							/>
+						)}
 					</Col>
 				</Row>
 				<h1 id="related-jobs">Công việc liên quan</h1>

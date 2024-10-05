@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Recruitment Result Notification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            color: #2a9d8f;
+        }
+
+        .info {
+            margin-bottom: 10px;
+        }
+
+        .info strong {
+            display: inline-block;
+            width: 150px;
+        }
+
+        .status {
+            font-weight: bold;
+            color: #e76f51;
+        }
+
+        .content {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9f5f5;
+            border-left: 4px solid #2a9d8f;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Recruitment result for the position "<span th:text="${jobTitle}"></span>"</h2>
+
+    <p class="info"><strong>Applicant Name:</strong> <span th:text="${applicantName}"></span></p>
+    <p class="info"><strong>Company Name:</strong> <span th:text="${companyName}"></span></p>
+    <p class="info"><strong>Application Status:</strong> <span class="status" th:text="${status}"></span></p>
+
+    <div class="content">
+        <p><strong>Email Subject from Recruiter:</strong></p>
+        <p th:text="${recruiterMailSubject}"></p>
+
+        <p><strong>Email Content:</strong></p>
+        <p th:text="${recruiterMailContent}"></p>
+    </div>
+
+    <p>If you have any questions, please contact our Human Resources department.</p>
+
+    <p>Best regards,</p>
+    <p><strong>Recruitment Team</strong></p>
+</div>
+</body>
+</html>

@@ -57,16 +57,11 @@ const Navbar = () => {
 				{ key: "1", label: "Tìm việc", link: paths.home },
 				{
 					key: "2",
-					label: "Việc làm theo ngành nghề",
-					link: "/jobs/industry",
+					label: "Đề xuất việc làm phù hợp với hồ sơ",
+					link: paths["applicant-job-recommendation"],
 				},
 				{
 					key: "3",
-					label: "Việc làm theo địa điểm",
-					link: "/jobs/location",
-				},
-				{
-					key: "4",
 					label: "Việc làm đã ứng tuyển",
 					link: paths["application-management"],
 				},
@@ -76,9 +71,12 @@ const Navbar = () => {
 			key: "resume",
 			label: "Hồ sơ & CV",
 			items: [
-				{ key: "1", label: "Quản lý CV", link: "/resume-management" },
+				{
+					key: "1",
+					label: "Quản lý CV",
+					link: paths["resume-management"],
+				},
 				{ key: "2", label: "Tải CV lên", link: paths["upload-cv"] },
-				{ key: "3", label: "Xem Hồ sơ", link: "/resume/view" },
 			],
 		},
 		{
@@ -88,7 +86,7 @@ const Navbar = () => {
 				{
 					key: "1",
 					label: "Danh sách công ty",
-					link: "/company/list",
+					link: paths["companies-hiring"],
 				},
 				{
 					key: "2",

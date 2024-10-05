@@ -76,11 +76,17 @@ public class JobPostController {
                 .build();
     }
 
-    ApiService apiService;
+    @GetMapping("/get-all/recruiterId={recruiterId}&pageNumber={pageNumber}")
+    ApiResponse<Page<JobPostResponse>> getJobPostsList(@PathVariable("recruiterId") String recruiterId,
+                                                       @PathVariable("pageNumber") int pageNumber) {
+        return ApiResponse.<Page<JobPostResponse>>builder()
+                .result(this.jobPostService.getJobPostListInTermsOfCompany(recruiterId, pageNumber))
+                .build();
+    }
 
-    @GetMapping("/classify")
-    String classify(@RequestParam("cv_link") String cv_link) {
-        return this.apiService.classifyCV(cv_link);
+    @GetMapping("/statistic-by-field")
+    ApiResponse<Object> statisticByJobField() {
+        return ApiResponse.builder().result(this.jobPostService.jobPostByJobFieldStatistic(2024)).build();
     }
 
 }

@@ -13,4 +13,6 @@ export const paths = {
 	"application-management": "/application-management",
 	"user-profile": "/profile",
 	"application-detail-recruiter-view": "/application-detail-recruiter-view",
+	"applicant-job-recommendation": "/view-job-recommendations",
+	"companies-hiring": "/companies-hiring",
 };

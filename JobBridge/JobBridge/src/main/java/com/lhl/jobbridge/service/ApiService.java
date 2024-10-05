@@ -95,24 +95,10 @@ public class ApiService {
                                 log.error("Error calling similarity API", e);
                             }
                         }
-
                     }
                 });
             });
         }
 
     }
-
-//    @Scheduled(fixedRate = 20000)
-//    public void callExternalApi() {
-//        String url = "http://127.0.0.1:5000/cv-matching-jd";
-//        Map<String, Object> requestBody = new HashMap<>();
-//        requestBody.put("jd_text", "hello");
-//        requestBody.put("file", "");
-//        String response = this.restTemplate.postForObject(url, requestBody, String.class);
-//        log.info("ket qua: ");
-//        log.info(response);
-//    }
-
-
 }

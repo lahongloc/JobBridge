@@ -1,10 +1,12 @@
-// export const isNormalUser = (user) => {
-// 	if (user !== null) return user.user.role === "NORMAL_USER";
-// };
-
-// export const isAdmin = (user) => {
-// 	if (user !== null) return user.user.role === "ADMIN";
-// };
 export const isLogin = (user) => {
 	return !(user === null);
 };
+
+export const isApplicant = (user) =>
+	isLogin(user) && user.roles.some((role) => role.name === "APPLICANT");
+
+export const isAdmin = (user) =>
+	isLogin(user) && user.roles.some((role) => role.name === "ADMIN");
+
+export const isRecruiter = (user) =>
+	isLogin(user) && user.roles.some((role) => role.name === "RECRUITER");

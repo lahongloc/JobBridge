@@ -19,7 +19,7 @@ import cookie from "react-cookies";
 const { Text } = Typography;
 const { Search } = Input;
 
-const CVList = () => {
+const CVList = ({ user }) => {
 	const [data, setData] = useState(null);
 	const [filteredData, setFilteredData] = useState(null);
 	const [loading, setLoading] = useState(false);
@@ -42,6 +42,7 @@ const CVList = () => {
 	};
 
 	useEffect(() => {
+		console.log("user la: ", user);
 		loadData();
 	}, []);
 

@@ -57,6 +57,9 @@ spring-mail:
           starttls:
             enable: true
 
+company:
+  size: 12
+
 
 server-cv:
   similarity-calc: http://127.0.0.1:5000/cv-matching-jd

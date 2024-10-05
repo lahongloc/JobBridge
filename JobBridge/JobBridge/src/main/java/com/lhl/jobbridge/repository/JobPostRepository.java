@@ -21,4 +21,6 @@ public interface JobPostRepository extends JpaRepository<JobPost, String>, JpaSp
     List<JobPost> findAllByJobField_JobFieldGroup_Id(String jobFieldGroupId);
 
     List<JobPost> findByApplicationDueDateAfter(Date currentDate);
+
+    long countByJobField_Id(String jobFieldId);
 }

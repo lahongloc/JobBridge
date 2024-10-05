@@ -24,9 +24,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -89,7 +87,13 @@ public class JobPostService {
         return this.jobPostMapper.toJobPostResponse(jobPost);
     }
 
-    @PreAuthorize("hasRole('RECRUITER')")
+    public Page<JobPostResponse> getJobPostListInTermsOfCompany(String recruiterId, int pageNumber) {
+        User user = this.userRepository.findById(recruiterId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        Pageable pageable = PageRequest.of(pageNumber - 1, Integer.parseInt(RECRUITER_VIEW_PAGE_SIZE));
+        return this.jobPostRepository.findByUser(user, pageable).map(this.jobPostMapper::toJobPostResponse);
+    }
+
     public Page<JobPostResponse> getJobPostsByRecruiter(int pageNumber) {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
@@ -97,7 +101,6 @@ public class JobPostService {
         User user = this.userRepository.findByEmail(name)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-        // Điều chỉnh pageNumber để bắt đầu từ 0
         Pageable pageable = PageRequest.of(pageNumber - 1, Integer.parseInt(RECRUITER_VIEW_PAGE_SIZE));
         return this.jobPostRepository.findByUser(user, pageable)
                 .map(this.jobPostMapper::toJobPostResponse);
@@ -215,6 +218,18 @@ public class JobPostService {
                 findById(jobFieldId).orElseThrow(() -> new AppException(ErrorCode.JOBFIELD_NOT_FOUND));
 
         return getJobPostsByJobFieldGroup(jobField.getJobFieldGroup().getId());
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public Object jobPostByJobFieldStatistic(int year) {
+        List<JobField> jobFields = this.jobFieldRepository.findAll();
+        Map<String, String> statistic = new HashMap<>();
+        jobFields.forEach(jobField -> {
+            long count = this.jobPostRepository.countByJobField_Id(jobField.getId());
+            statistic.put(jobField.getName(), String.valueOf(count));
+        });
+
+        return statistic;
     }
 
 }

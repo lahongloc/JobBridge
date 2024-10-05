@@ -2,67 +2,74 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Thông báo kết quả tuyển dụng</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Job Application Notification</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 20px;
         }
 
         .container {
-            padding: 20px;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 5px;
             max-width: 600px;
-            margin: 0 auto;
+            margin: auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        h2 {
-            color: #2a9d8f;
+        h1 {
+            color: #333;
         }
 
-        .info {
-            margin-bottom: 10px;
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #555;
         }
 
-        .info strong {
-            display: inline-block;
-            width: 150px;
-        }
-
-        .status {
-            font-weight: bold;
-            color: #e76f51;
-        }
-
-        .content {
+        .footer {
             margin-top: 20px;
-            padding: 10px;
-            background-color: #e9f5f5;
-            border-left: 4px solid #2a9d8f;
+            font-size: 14px;
+            color: #777;
+            text-align: center;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 15px;
+            margin-top: 10px;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h2>Kết quả tuyển dụng cho vị trí "<span th:text="${jobTitle}"></span>"</h2>
+    <h1>New Application for the Position: <span th:text="${jobTitle}"></span></h1>
+    <p>Dear Recruiter,</p>
+    <p>You have received a new application from <strong th:text="${applicantName}"></strong> for the position of <strong
+            th:text="${jobTitle}"></strong>.</p>
 
-    <p class="info"><strong>Tên ứng viên:</strong> <span th:text="${applicantName}"></span></p>
-    <p class="info"><strong>Tên công ty:</strong> <span th:text="${companyName}"></span></p>
-    <p class="info"><strong>Trạng thái hồ sơ:</strong> <span class="status" th:text="${status}"></span></p>
+    <h2>Applicant Details:</h2>
+    <p><strong>Email:</strong> <span th:text="${applicantEmail}"></span></p>
+    <p><strong>Hotline:</strong> <span th:text="${applicantHotline}"></span></p>
+    <p><strong>Applied Date:</strong> <span th:text="${appliedDate}"></span></p>
+    <p><strong>Company Name:</strong> <span th:text="${companyName}"></span></p>
+    <p><strong>Job Location:</strong> <span th:text="${jobLocation}"></span></p>
+    <p><strong>Job Type:</strong> <span th:text="${jobType}"></span></p>
 
-    <div class="content">
-        <p><strong>Chủ đề email từ nhà tuyển dụng:</strong></p>
-        <p th:text="${recruiterMailSubject}"></p>
+    <p>You can view the applicant's resume by clicking the link below:</p>
+    <a href="#" th:href="${applicantResumeLink}" class="button">View Resume</a>
 
-        <p><strong>Nội dung email:</strong></p>
-        <p th:text="${recruiterMailContent}"></p>
+    <div class="footer">
+        <p>Thank you!,<br>Powered by JobBridge</p>
     </div>
-
-    <p>Nếu có bất kỳ câu hỏi nào, vui lòng liên hệ với bộ phận Nhân sự của chúng tôi.</p>
-
-    <p>Trân trọng,</p>
-    <p><strong>Đội ngũ tuyển dụng</strong></p>
 </div>
 </body>
 </html>

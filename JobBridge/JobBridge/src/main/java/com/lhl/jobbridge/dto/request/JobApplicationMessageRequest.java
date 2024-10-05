@@ -2,7 +2,6 @@ package com.lhl.jobbridge.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
@@ -11,10 +10,13 @@ import org.springframework.web.multipart.MultipartFile;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class JobApplicationMessageRequest {
     String applicantName;
-    String jobTitle;
+    String applicantEmail;
+    String applicantHotline;
+    String applicantResumeLink;
     String companyName;
-    String to;
-    String status;
-    String recruiterMailSubject;
-    String recruiterMailContent;
+    String appliedDate;
+    String jobTitle;
+    String jobLocation;
+    String jobType;
+    String recruiterEmail;
 }

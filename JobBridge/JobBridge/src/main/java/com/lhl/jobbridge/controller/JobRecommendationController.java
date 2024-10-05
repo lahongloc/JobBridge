@@ -7,6 +7,7 @@ import com.lhl.jobbridge.service.JobRecommendationService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,13 @@ public class JobRecommendationController {
     ApiResponse<JobRecommendationResponse> create(@ModelAttribute JobRecommendationRequest request) {
         return ApiResponse.<JobRecommendationResponse>builder()
                 .result(this.jobRecommendationService.createJobRecommendation(request))
+                .build();
+    }
+
+    @GetMapping("/pageNumber={pageNumber}")
+    ApiResponse<Page<JobRecommendationResponse>> getJobRecomendationList(@PathVariable("pageNumber") int pageNumber) {
+        return ApiResponse.<Page<JobRecommendationResponse>>builder()
+                .result(this.jobRecommendationService.getJobRecommendationsByApplicant(pageNumber))
                 .build();
     }
 }

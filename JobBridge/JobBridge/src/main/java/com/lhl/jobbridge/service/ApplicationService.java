@@ -1,12 +1,7 @@
 package com.lhl.jobbridge.service;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import com.lhl.jobbridge.constants.JobQueue;
-import com.lhl.jobbridge.dto.request.ApplicationRequest;
-import com.lhl.jobbridge.dto.request.CurriculumVitaeRequest;
-import com.lhl.jobbridge.dto.request.JobApplicationMessageRequest;
-import com.lhl.jobbridge.dto.request.MailSenderRequest;
+import com.lhl.jobbridge.dto.request.*;
 import com.lhl.jobbridge.dto.response.ApplicationResponse;
 import com.lhl.jobbridge.dto.response.CurriculumVitaeResponse;
 import com.lhl.jobbridge.entity.Application;
@@ -31,8 +26,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -67,6 +64,7 @@ public class ApplicationService {
     protected String NOT_SUITABLE_STATUS;
 
     @PreAuthorize("hasRole('RECRUITER')")
+    @Transactional
     public void updateApplicationStatus(String applicationId, boolean isSuitable, MailSenderRequest request) {
         Application application = this.applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new AppException(ErrorCode.APPLICATION_NOT_FOUND));
@@ -87,7 +85,7 @@ public class ApplicationService {
 
         Optional<User> applicant = this.userRepository.findByCurriculumVitaes_Id(application.getCurriculumVitae().getId());
 
-        JobApplicationMessageRequest messageRequest = JobApplicationMessageRequest.builder()
+        ApplicationStatusChangeMessageRequest messageRequest = ApplicationStatusChangeMessageRequest.builder()
                 .applicantName(applicant.get().getFullname())
                 .companyName(application.getJobPost().getUser().getCompanyName())
                 .jobTitle(application.getJobPost().getJobTitle())
@@ -96,11 +94,11 @@ public class ApplicationService {
                 .recruiterMailContent(request.getText())
                 .to(request.getTo())
                 .build();
-        this.rabbitTemplate.convertAndSend(JobQueue.JOB_APPLICATION_QUEUE, messageRequest);
-
-//        this.myEmailService.sendEmail(request.getTo(), request.getSubject(), request.getText());
+        this.rabbitTemplate.convertAndSend(JobQueue.APPLICATION_STATUS_QUEUE, messageRequest);
     }
 
+    @Transactional
+    @PreAuthorize("hasRole('APPLICANT')")
     public ApplicationResponse createApplication(ApplicationRequest request) throws IOException {
         var jobPost = this.jobPostRepository.findById(request.getJobPost())
                 .orElseThrow(() -> new AppException(ErrorCode.JOBPOST_NOT_FOUND));
@@ -108,15 +106,17 @@ public class ApplicationService {
             throw new AppException(ErrorCode.APPLICATION_DUE_DATE_PASSED);
         }
 
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = this.userRepository.findByEmail(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+
         CurriculumVitae curriculumVitae;
         if (request.getCurriculumVitae() != null && !request.getCurriculumVitae().isEmpty()) {
             curriculumVitae = this.curriculumVitaeRepository.findById(request.getCurriculumVitae())
                     .orElseThrow(() -> new AppException(ErrorCode.CURRICULUM_VITAE_NOT_FOUND));
 
-            var context = SecurityContextHolder.getContext();
-            String name = context.getAuthentication().getName();
-            User user = this.userRepository.findByEmail(name)
-                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
             if (!user.getCurriculumVitaes().contains(curriculumVitae)) {
                 throw new AppException(ErrorCode.CURRICULUM_VITAE_NOT_OWNED_BY_USER);
             }
@@ -142,6 +142,22 @@ public class ApplicationService {
         application.setJobPost(jobPost);
         application.setStatus(UNSEEN_STATUS);
         this.applicationRepository.save(application);
+
+
+        JobApplicationMessageRequest messageRequest = JobApplicationMessageRequest.builder()
+                .applicantName(user.getFullname())
+                .applicantEmail(user.getEmail())
+                .applicantHotline(application.getHotline())
+                .applicantResumeLink(curriculumVitae.getFilePath())
+                .companyName(jobPost.getUser().getCompanyName())
+                .appliedDate(LocalDateTime.now().toString())
+                .jobTitle(jobPost.getJobTitle())
+                .jobLocation(jobPost.getJobLocation().getName())
+                .jobType(jobPost.getJobField().getName())
+                .recruiterEmail(jobPost.getUser().getEmail())
+                .build();
+        this.rabbitTemplate.convertAndSend(JobQueue.JOB_APPLICATION_QUEUE, messageRequest);
+
         return this.applicationMapper.toApplicationResponse(application);
     }
 

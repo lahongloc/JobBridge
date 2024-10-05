@@ -3,6 +3,7 @@ package com.lhl.jobbridge.controller;
 import com.lhl.jobbridge.dto.request.ApiResponse;
 import com.lhl.jobbridge.dto.request.UserCreationRequest;
 import com.lhl.jobbridge.dto.request.UserUpdateRequest;
+import com.lhl.jobbridge.dto.response.RoleStatisticResponse;
 import com.lhl.jobbridge.dto.response.UserResponse;
 import com.lhl.jobbridge.entity.User;
 import com.lhl.jobbridge.service.UserService;
@@ -11,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -68,9 +70,14 @@ public class UserController {
         this.userService.deleteUser(userId);
     }
 
-    @GetMapping("/hello")
-    public String hello() {
-        return "not work";
+    @GetMapping("/get-recruiters/pageNumber={pageNumber}")
+    ApiResponse<Page<UserResponse>> getRecruiter(@PathVariable("pageNumber") int pageNumber) {
+        return ApiResponse.<Page<UserResponse>>builder().result(this.userService.getRecruiters(pageNumber)).build();
+    }
+
+    @GetMapping("/role-statistic")
+    ApiResponse<RoleStatisticResponse> roleStatistic() {
+        return ApiResponse.<RoleStatisticResponse>builder().result(this.userService.roleStatistic()).build();
     }
 
 }
