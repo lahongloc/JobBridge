@@ -85,8 +85,13 @@ public class JobPostController {
     }
 
     @GetMapping("/statistic-by-field")
-    ApiResponse<Object> statisticByJobField() {
-        return ApiResponse.builder().result(this.jobPostService.jobPostByJobFieldStatistic(2024)).build();
+    ApiResponse<Object> statisticByJobField(@RequestParam int year) {
+        return ApiResponse.builder().result(this.jobPostService.jobPostByJobFieldStatistic(year)).build();
+    }
+
+    @GetMapping("/statistic-by-location")
+    ApiResponse<Object> statisticByJobLocation(@RequestParam int year) {
+        return ApiResponse.builder().result(this.jobPostService.jobPostByJobLocationStatistic(year)).build();
     }
 
 }

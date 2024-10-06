@@ -3,6 +3,7 @@ package com.lhl.jobbridge.service;
 import com.lhl.jobbridge.constants.JobQueue;
 import com.lhl.jobbridge.dto.request.ApplicationStatusChangeMessageRequest;
 import com.lhl.jobbridge.dto.request.JobApplicationMessageRequest;
+import com.lhl.jobbridge.dto.request.JobRecommendRequest;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AccessLevel;
@@ -36,6 +37,32 @@ public class RabbitConsumerService {
     public void receiveMessage(JobApplicationMessageRequest request) throws MessagingException {
         jobApplicationNotification(request);
     }
+
+    @RabbitHandler
+    @RabbitListener(queues = JobQueue.JOB_RECOMMENDATION_QUEUE)
+    public void receiveMessage(JobRecommendRequest request) throws MessagingException {
+        jobRecommendNotification(request);
+    }
+
+
+    private void jobRecommendNotification(JobRecommendRequest request) throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+        helper.setTo(request.getTo());
+        helper.setSubject("JobBridge - Your Job Recommendations");
+
+        Context thymeleafContext = new Context();
+        thymeleafContext.setVariable("applicantName", request.getApplicantName());
+        thymeleafContext.setVariable("link", request.getLink());
+
+
+        String htmlContent = thymeleafTemplateEngine.process("job-recommend-email", thymeleafContext);
+        helper.setText(htmlContent, true);
+
+        mailSender.send(mimeMessage);
+    }
+
 
     private void applicationStatusNotification(ApplicationStatusChangeMessageRequest request) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();

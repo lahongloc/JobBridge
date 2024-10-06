@@ -34,6 +34,7 @@ import JobRecommendationList from "./components/site-components/JobRecommendatio
 import CompanyList from "./components/site-components/CompanyList";
 import CompanyJobList from "./components/site-components/CompanyJobList";
 import Statistic from "./components/site-components/Statistic";
+import AdminPage from "./components/site-components/AdminPage";
 
 export const UserContext = createContext();
 export const WorkTypeContext = createContext();
@@ -77,11 +78,15 @@ const App = () => {
 				<WorkTypeContext.Provider value={workTypes}>
 					<JobFieldContext.Provider value={jobFields}>
 						<JobLocationContext.Provider value={jobLocations}>
-							<div style={{ marginBottom: "5rem" }}>
+							<div
+								style={{
+									marginBottom: "5rem",
+									backgroundColor: `${isAdmin(user) ? "rgb(240, 242, 245)" : "#fff"}`,
+								}}
+							>
 								<Navbar />
 							</div>
 							<Routes>
-								{/* APPLICANT */}
 								{isApplicant(user) && (
 									<>
 										<Route
@@ -160,6 +165,13 @@ const App = () => {
 										/>
 									</>
 								)}
+
+								{isAdmin(user) && (
+									<Route
+										path={paths["admin-page"]}
+										element={<AdminPage />}
+									/>
+								)}
 								{/* LOGIN */}
 								{isLogin(user) && (
 									<>
@@ -176,23 +188,26 @@ const App = () => {
 									element={<JobDetail />}
 								/>
 								<Route path={paths.home} element={<Home />} />
+
 								<Route
-									path={paths["companies-hiring"]}
+									path="/test-chart"
 									element={<CompanyList />}
 								/>
 								<Route
 									path={`${paths["companies-hiring"]}/company`}
 									element={<CompanyJobList />}
 								/>
-								<Route
+								{/* <Route
 									path="/test-chart"
 									element={<Statistic />}
-								/>
+								/> */}
 							</Routes>
 
-							<div style={{ marginTop: "5rem" }}>
-								<AppFooter />
-							</div>
+							{isAdmin(user) || (
+								<div style={{ marginTop: "5rem" }}>
+									<AppFooter />
+								</div>
+							)}
 						</JobLocationContext.Provider>
 					</JobFieldContext.Provider>
 				</WorkTypeContext.Provider>

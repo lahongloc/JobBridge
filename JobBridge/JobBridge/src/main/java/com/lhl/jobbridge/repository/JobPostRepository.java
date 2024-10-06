@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -22,5 +23,13 @@ public interface JobPostRepository extends JpaRepository<JobPost, String>, JpaSp
 
     List<JobPost> findByApplicationDueDateAfter(Date currentDate);
 
+    List<JobPost> findByApplicationDueDateBefore(Date currentDate);
+
     long countByJobField_Id(String jobFieldId);
+
+    List<JobPost> findByJobField_IdAndCreatedDateBetween(String jobFieldId, Date startDate, Date endDate);
+
+    long countByJobField_IdAndCreatedDateBetween(String jobFieldId, Date startDate, Date endDate);
+
+    long countByJobLocation_IdAndCreatedDateBetween(String jobLocationId, Date startDate, Date endDate);
 }

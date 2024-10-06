@@ -17,6 +17,7 @@ import {
 } from "react-cookies";
 import { UserContext } from "../../App";
 import { LOGIN } from "../../reducers/actions";
+import { roles } from "../../authorizations/roleAuth";
 
 const { Title } = Typography;
 
@@ -53,7 +54,18 @@ const LoginForm = () => {
 					payload: currentUser.data.result,
 				});
 
-				navigate(`${paths.home}?user=true`);
+				console.log("user: ", currentUser.data.result);
+
+				if (currentUser.data.result.roles[0].name === roles.ADMIN) {
+					navigate(paths["admin-page"]);
+				}
+				if (currentUser.data.result.roles[0].name === roles.APPLICANT) {
+					navigate(`${paths.home}?user=true`);
+				}
+
+				if (currentUser.data.result.roles[0].name === roles.RECRUITER) {
+					navigate(paths["posted-jobs"]);
+				}
 			}
 		} catch (err) {
 			messageApi.open({

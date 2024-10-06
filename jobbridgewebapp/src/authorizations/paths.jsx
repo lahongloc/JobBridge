@@ -15,4 +15,5 @@ export const paths = {
 	"application-detail-recruiter-view": "/application-detail-recruiter-view",
 	"applicant-job-recommendation": "/view-job-recommendations",
 	"companies-hiring": "/companies-hiring",
+	"admin-page": "/admin",
 };

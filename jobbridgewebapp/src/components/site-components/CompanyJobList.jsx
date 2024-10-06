@@ -40,7 +40,7 @@ const CompanyJobList = () => {
 	const loadCompanies = async () => {
 		try {
 			const res = await APIs.get(
-				`${enpoints["getCompanies"]}/pageNumber=${currentCompanyPage}`,
+				`${enpoints["getCompanies"]}/role=RECRUITER&pageNumber=${currentCompanyPage}`,
 			);
 			setCompanies(res.data);
 		} catch (err) {

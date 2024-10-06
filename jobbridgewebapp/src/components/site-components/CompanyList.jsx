@@ -14,8 +14,9 @@ const CompanyList = () => {
 	const loadCompanies = async () => {
 		try {
 			const res = await APIs.get(
-				`${enpoints["getCompanies"]}/pageNumber=${currentPage}`,
+				`${enpoints["getCompanies"]}/role=RECRUITER&pageNumber=${currentPage}`,
 			);
+			console.log("xin chao: ", res.data);
 			setCompanies(res.data);
 		} catch (err) {
 			console.error(err);

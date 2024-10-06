@@ -50,4 +50,3 @@ def calculate_similarity(cv_text, job_desc_text):
     cosine_sim = cosine_similarity(vectors)
 
     return cosine_sim[0][1]  # Return similarity score between CV and job description
-

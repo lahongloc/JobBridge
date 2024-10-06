@@ -1,22 +1,27 @@
 package com.lhl.jobbridge.service;
 
+import com.lhl.jobbridge.constants.JobQueue;
+import com.lhl.jobbridge.dto.request.JobRecommendRequest;
 import com.lhl.jobbridge.entity.CurriculumVitae;
 import com.lhl.jobbridge.entity.JobPost;
 import com.lhl.jobbridge.entity.JobRecommendation;
 import com.lhl.jobbridge.repository.CurriculumVitaeRepository;
 import com.lhl.jobbridge.repository.JobPostRepository;
 import com.lhl.jobbridge.repository.JobRecommendationRepository;
+import com.lhl.jobbridge.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -34,6 +39,8 @@ public class ApiService {
     CurriculumVitaeRepository curriculumVitaeRepository;
     JobPostRepository jobPostRepository;
     JobRecommendationRepository jobRecommendationRepository;
+    //    RabbitTemplate rabbitTemplate;
+    UserRepository userRepository;
 
     @NonFinal
     @Value("${server-cv.similarity-calc}")
@@ -60,7 +67,9 @@ public class ApiService {
 
 
     @Scheduled(fixedRate = 20000)
+    @Transactional
     public void implementJobRecommendation() {
+//        this.jobRecommendationRepository.deleteAll();
         List<CurriculumVitae> curriculumVitaeList = this.curriculumVitaeRepository.findAll();
         List<JobPost> jobPostList = this.jobPostRepository.findByApplicationDueDateAfter(new Date());
 
@@ -88,9 +97,14 @@ public class ApiService {
                                             .matchingPossibility(Double.parseDouble(response))
                                             .build();
                                     this.jobRecommendationRepository.save(jobRecommendation);
-                                }
 
-                                log.info("Response: " + response);
+//                                    JobRecommendRequest request = JobRecommendRequest.builder()
+//                                            .to(this.userRepository.findByCurriculumVitaes_Id(curriculumVitae.getId()).get().getEmail())
+//                                            .link("http://localhost:5173/view-job-recommendations")
+//                                            .build();
+//
+//                                    this.rabbitTemplate.convertAndSend(JobQueue.JOB_RECOMMENDATION_QUEUE, request);
+                                }
                             } catch (Exception e) {
                                 log.error("Error calling similarity API", e);
                             }

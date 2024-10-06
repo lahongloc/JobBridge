@@ -23,8 +23,12 @@ export const enpoints = {
 	updateApplicantStatus: "/applications/update-application-status",
 	getGroupOfJobPosts: "/jobPosts/get-by-job-field-group",
 	jobRecommendationHandler: "/jobRecommendations",
-	getCompanies: "/users/get-recruiters",
+	getCompanies: "/users/get-users",
 	getJobPostByCompany: "/jobPosts/get-all",
+	getUsersByRole: "/users/get-users",
+	jobPostFielsStatistic: "/jobPosts/statistic-by-field",
+	jobLocationStatistic: "jobPosts/statistic-by-location",
+	roleStatistic: "/users/role-statistic",
 };
 
 export default axios.create({

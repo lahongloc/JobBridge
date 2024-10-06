@@ -225,11 +225,41 @@ public class JobPostService {
         List<JobField> jobFields = this.jobFieldRepository.findAll();
         Map<String, String> statistic = new HashMap<>();
         jobFields.forEach(jobField -> {
-            long count = this.jobPostRepository.countByJobField_Id(jobField.getId());
+            long count = this.jobPostRepository.countByJobField_IdAndCreatedDateBetween(jobField.getId(), getFirstDateOfYear(year), getLastDateOfYear(year));
             statistic.put(jobField.getName(), String.valueOf(count));
         });
 
         return statistic;
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public Object jobPostByJobLocationStatistic(int year) {
+        List<JobLocation> jobLocations = this.jobLocationRepositoty.findAll();
+        Map<String, String> statistic = new HashMap<>();
+        jobLocations.forEach(jobLocation -> {
+            long count = this.jobPostRepository.countByJobLocation_IdAndCreatedDateBetween(jobLocation.getId(), getFirstDateOfYear(year), getLastDateOfYear(year));
+            statistic.put(jobLocation.getName(), String.valueOf(count));
+        });
+        return statistic;
+    }
+
+
+    public static Date getFirstDateOfYear(int year) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, Calendar.JANUARY);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        return calendar.getTime();
+    }
+
+    public static Date getLastDateOfYear(int year) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, Calendar.DECEMBER);
+        calendar.set(Calendar.DAY_OF_MONTH, 31);
+        return calendar.getTime();
     }
 
 }

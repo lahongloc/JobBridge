@@ -70,9 +70,10 @@ public class UserController {
         this.userService.deleteUser(userId);
     }
 
-    @GetMapping("/get-recruiters/pageNumber={pageNumber}")
-    ApiResponse<Page<UserResponse>> getRecruiter(@PathVariable("pageNumber") int pageNumber) {
-        return ApiResponse.<Page<UserResponse>>builder().result(this.userService.getRecruiters(pageNumber)).build();
+    @GetMapping("/get-users/role={role}&pageNumber={pageNumber}")
+    ApiResponse<Page<UserResponse>> getUsersByRole(@PathVariable("role") String role,
+                                                   @PathVariable("pageNumber") int pageNumber) {
+        return ApiResponse.<Page<UserResponse>>builder().result(this.userService.getUsersByRole(role, pageNumber)).build();
     }
 
     @GetMapping("/role-statistic")

@@ -10,3 +10,9 @@ export const isAdmin = (user) =>
 
 export const isRecruiter = (user) =>
 	isLogin(user) && user.roles.some((role) => role.name === "RECRUITER");
+
+export const roles = {
+	RECRUITER: "RECRUITER",
+	ADMIN: "ADMIN",
+	APPLICANT: "APPLICANT",
+};

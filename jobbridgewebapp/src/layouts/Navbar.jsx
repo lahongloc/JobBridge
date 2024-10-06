@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { paths } from "../authorizations/paths";
 import { UserContext } from "../App";
-import { isLogin } from "../authorizations/roleAuth";
+import { isAdmin, isLogin, isRecruiter } from "../authorizations/roleAuth";
 import UserAvatar from "../components/ui components/UserAvatar";
 import { UserOutlined, SolutionOutlined } from "@ant-design/icons";
 
@@ -88,34 +88,24 @@ const Navbar = () => {
 					label: "Danh sách công ty",
 					link: paths["companies-hiring"],
 				},
-				{
-					key: "2",
-					label: "Công ty nổi bật",
-					link: "/company/highlights",
-				},
 			],
 		},
+	];
+
+	const menuItemsRecruiter = [
 		{
-			key: "tools",
-			label: "Công cụ",
+			key: "jobs",
+			label: "Quản lý Việc làm",
 			items: [
-				{ key: "1", label: "Tính lương", link: "/tools/salary" },
 				{
-					key: "2",
-					label: "Ước tính thuế thu nhập",
-					link: "/tools/tax",
+					key: "1",
+					label: "Đăng việc",
+					link: paths["job-posting"],
 				},
-			],
-		},
-		{
-			key: "career",
-			label: "Cẩm nang nghề nghiệp",
-			items: [
-				{ key: "1", label: "Mẹo tìm việc", link: "/career/tips" },
 				{
 					key: "2",
-					label: "Hướng dẫn viết CV",
-					link: "/career/guide",
+					label: "Việc làm đã đăng",
+					link: paths["posted-jobs"],
 				},
 			],
 		},
@@ -168,7 +158,7 @@ const Navbar = () => {
 				justifyContent: "space-between",
 				alignItems: "center",
 				padding: "10px 20px",
-				backgroundColor: "#fff",
+				backgroundColor: `${isAdmin(user) ? "#f0f2f5" : "#fff"}`,
 				borderBottom: "1px solid #f0f0f0",
 				position: "fixed",
 				top: "0",
@@ -180,7 +170,12 @@ const Navbar = () => {
 			}}
 		>
 			{/* Logo bên trái */}
-			<div style={{ display: "flex", alignItems: "center" }}>
+			<div
+				style={{
+					display: "flex",
+					alignItems: "center",
+				}}
+			>
 				<img
 					onClick={() => navigate(paths.home)}
 					src={logo}
@@ -192,10 +187,17 @@ const Navbar = () => {
 					}}
 				/>
 			</div>
-
-			<Space>
-				{menuItems.map((menu, index) => renderDropdown(menu, index))}
-			</Space>
+			{isAdmin(user) || (
+				<Space>
+					{isRecruiter(user)
+						? menuItemsRecruiter.map((menu, index) =>
+								renderDropdown(menu, index),
+							)
+						: menuItems.map((menu, index) =>
+								renderDropdown(menu, index),
+							)}
+				</Space>
+			)}
 
 			<Space>
 				{!isLogin(user) && (

@@ -31,6 +31,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.*;
@@ -50,6 +51,7 @@ public class UserService {
     @Value("${company.size}")
     protected String PAGE_SIZE;
 
+    @Transactional
     public User createUser(UserCreationRequest request, boolean isRecuiter) throws IOException {
         if (this.userRepository.existsUserByEmail(request.getEmail())) {
             throw new RuntimeException("ErrorCode.USER_EXISTED");
@@ -137,8 +139,8 @@ public class UserService {
         this.userRepository.deleteById(userId);
     }
 
-    public Page<UserResponse> getRecruiters(int pageNumber) {
-        Role role = this.roleRepository.findById("RECRUITER")
+    public Page<UserResponse> getUsersByRole(String userRole, int pageNumber) {
+        Role role = this.roleRepository.findById(userRole)
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
 
         Pageable pageable = PageRequest.of(pageNumber - 1, Integer.parseInt(PAGE_SIZE));
