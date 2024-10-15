@@ -190,7 +190,7 @@ const App = () => {
 								<Route path={paths.home} element={<Home />} />
 
 								<Route
-									path="/test-chart"
+									path={paths["companies-hiring"]}
 									element={<CompanyList />}
 								/>
 								<Route

@@ -5,6 +5,7 @@ import com.lhl.jobbridge.dto.request.JobRecommendRequest;
 import com.lhl.jobbridge.entity.CurriculumVitae;
 import com.lhl.jobbridge.entity.JobPost;
 import com.lhl.jobbridge.entity.JobRecommendation;
+import com.lhl.jobbridge.entity.User;
 import com.lhl.jobbridge.repository.CurriculumVitaeRepository;
 import com.lhl.jobbridge.repository.JobPostRepository;
 import com.lhl.jobbridge.repository.JobRecommendationRepository;
@@ -26,8 +27,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 @Service
@@ -39,7 +39,7 @@ public class ApiService {
     CurriculumVitaeRepository curriculumVitaeRepository;
     JobPostRepository jobPostRepository;
     JobRecommendationRepository jobRecommendationRepository;
-    //    RabbitTemplate rabbitTemplate;
+    RabbitTemplate rabbitTemplate;
     UserRepository userRepository;
 
     @NonFinal
@@ -65,11 +65,30 @@ public class ApiService {
         }
     }
 
+    private void sendRecommendationMail() {
+        List<CurriculumVitae> curriculumVitaes = this.jobRecommendationRepository.findDistinctCurriculumVitaesWithJobRecommendations();
+        Set<User> userSet = new HashSet<>();
+
+        curriculumVitaes.forEach(curriculumVitae -> {
+            Optional<User> user = this.userRepository.findByCurriculumVitaes_Id(curriculumVitae.getId());
+            user.ifPresent(userSet::add);
+        });
+
+        userSet.forEach(user -> {
+            JobRecommendRequest request = JobRecommendRequest.builder()
+                    .to(user.getEmail())
+                    .link("http://localhost:5173/view-job-recommendations")
+                    .build();
+            this.rabbitTemplate.convertAndSend(JobQueue.JOB_RECOMMENDATION_QUEUE, request);
+        });
+
+    }
+
 
     @Scheduled(fixedRate = 20000)
     @Transactional
     public void implementJobRecommendation() {
-//        this.jobRecommendationRepository.deleteAll();
+        this.jobRecommendationRepository.deleteAll();
         List<CurriculumVitae> curriculumVitaeList = this.curriculumVitaeRepository.findAll();
         List<JobPost> jobPostList = this.jobPostRepository.findByApplicationDueDateAfter(new Date());
 
@@ -90,21 +109,15 @@ public class ApiService {
                                 String response = this.restTemplate.postForObject(SIMILARYTI_CALC_API, requestEntity, String.class);
 
                                 assert response != null;
-                                if (Double.parseDouble(response) >= 20.0) {
+                                if (Double.parseDouble(response) >= 30.0) {
                                     JobRecommendation jobRecommendation = JobRecommendation.builder()
                                             .curriculumVitae(curriculumVitae)
                                             .jobPost(jobPost)
                                             .matchingPossibility(Double.parseDouble(response))
                                             .build();
                                     this.jobRecommendationRepository.save(jobRecommendation);
-
-//                                    JobRecommendRequest request = JobRecommendRequest.builder()
-//                                            .to(this.userRepository.findByCurriculumVitaes_Id(curriculumVitae.getId()).get().getEmail())
-//                                            .link("http://localhost:5173/view-job-recommendations")
-//                                            .build();
-//
-//                                    this.rabbitTemplate.convertAndSend(JobQueue.JOB_RECOMMENDATION_QUEUE, request);
                                 }
+
                             } catch (Exception e) {
                                 log.error("Error calling similarity API", e);
                             }
@@ -113,6 +126,6 @@ public class ApiService {
                 });
             });
         }
-
+        sendRecommendationMail();
     }
 }

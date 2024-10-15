@@ -25,8 +25,8 @@ public class User {
     @Column(unique = true)
     String email;
     LocalDate dob;
-    @ManyToMany
+    @OneToMany(fetch = FetchType.EAGER)
     Set<Role> roles;
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     Set<CurriculumVitae> curriculumVitaes;
 }
