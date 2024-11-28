@@ -25,8 +25,10 @@
 - **📊 Application Tracking:** View and monitor the status of your job applications.
 - **🗂️ CV Management:** Manage your uploaded CVs by adding, deleting, or setting a primary CV.
 - **🚩 Report Job Posts:** Report fraudulent or inappropriate job postings.
-- **💬 Messaging:** Communicate directly with recruiters through the built-in messaging system.
 - **🔔 Job Notifications:** Receive timely notifications about new and relevant job postings.
+- **📂 CV Classification:** Classify uploaded CVs by predefined categories (e.g., IT, Sales, Marketing) to better match with job postings.
+- **📈 CV-Job Compatibility:** Calculate the compatibility percentage between your CV and job postings to identify the best matches.
+- **📧 Job Suggestion Emails:** Receive periodic email updates with job suggestions tailored to your profile and preferences.
 
 ### 🏢 Recruiter
 
@@ -35,7 +37,6 @@
 - **📄 Manage Job Listings:** View, edit, and delete your posted job listings effortlessly.
 - **👥 View Applicants:** Access a list of applicants who have applied to your job postings.
 - **🤝 Candidate Recommendations:** Receive suggested candidates matched to your job postings through the integrated recommendation system.
-- **💬 Messaging:** Engage in direct communication with potential candidates.
 - **🔔 Recruitment Notifications:** Stay updated with notifications related to your job postings and candidate interactions.
 - **📈 Analytics & Reporting:** Access reports detailing the performance of your job listings, including applicant numbers, views, and applicant sources.
 - **🔍 CV Filtering System:** Utilize advanced filters (experience, skills, location) to identify the most suitable candidates efficiently.
@@ -43,18 +44,18 @@
 ### 🛠️ Admin
 
 - **👥 User Management:** Oversee all users across different roles (Applicants, Recruiters, Admins).
-- **⛔ Block Users:** Restrict access of problematic users with automatic email notifications upon blocking.
 - **📢 Job Post Management:** Monitor, approve, and manage all job postings on the platform.
 - **📊 System Analytics:** Generate comprehensive reports on platform activity including user registrations, job postings, and engagement metrics to inform system improvements.
 
 ## 🛠️ Technologies Used
 
-- **Backend:** Spring Boot, MySQL
+- **Backend:** Spring Boot, MySQL, Spring Security, JWT
 - **Frontend:** ReactJs, Ant Design
 - **Recommendation System:** Python, Flask, Naive Bayes Classifier
-- **Authentication:** OAuth 2.0 (Google, Facebook)
-- **Messaging:** WebSockets
-- **Deployment:** Docker, AWS
+- **Cloudinary:** For storing and managing uploaded files, such as CVs and profile pictures.
+- **Spring Mail:** To send email notifications, such as periodic job suggestions to applicants.
+- **Cron Jobs:** For scheduling periodic tasks, such as sending job suggestion emails.
+- **Machine Learning:** Used for CV classification and compatibility analysis between CVs and job postings.
 
 ## 📄 License
 
@@ -62,6 +63,6 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## 📫 Contact
 
-**La Hong Loc**
-- **Email:**  hongloc111990@gmail.com
-- **LinkedIn:** www.linkedin.com/in/hongloc2405
+**La Hong Loc**  
+- **Email:** hongloc111990@gmail.com, lahongloc.work@gmail.com
+- **LinkedIn:** [www.linkedin.com/in/hongloc2405](https://www.linkedin.com/in/hongloc2405)  
