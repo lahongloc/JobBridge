@@ -9,6 +9,7 @@
   - [🏢 Recruiter](#-recruiter)
   - [🛠️ Admin](#%EF%B8%8F-admin)
 - [🛠️ Technologies Used](#%EF%B8%8F-technologies-used)
+- [🌐 System Architecture](#%EF%B8%8F-system-architecture)
 - [📄 License](#-license)
 - [📫 Contact](#-contact)
 
@@ -56,6 +57,10 @@
 - **Spring Mail:** To send email notifications, such as periodic job suggestions to applicants.
 - **Cron Jobs:** For scheduling periodic tasks, such as sending job suggestion emails.
 - **Machine Learning:** Used for CV classification and compatibility analysis between CVs and job postings.
+
+## 🌐 System Architecture
+![image](https://github.com/user-attachments/assets/8aad04f0-d026-435d-bfa0-3c8cd36b7656)
+
 
 ## 📄 License
 
