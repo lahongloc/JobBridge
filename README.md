@@ -9,7 +9,7 @@
   - [🏢 Recruiter](#-recruiter)
   - [🛠️ Admin](#%EF%B8%8F-admin)
 - [🛠️ Technologies Used](#%EF%B8%8F-technologies-used)
-- [🌐 System Architecture](#%EF%B8%8F-system-architecture)
+- [🌐 System Architecture](#-system-architecture)  
 - [📄 License](#-license)
 - [📫 Contact](#-contact)
 
